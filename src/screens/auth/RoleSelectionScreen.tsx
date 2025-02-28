@@ -1,0 +1,102 @@
+import React from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ImageBackground,
+} from 'react-native';
+import {useDispatch} from 'react-redux';
+import {setUserRole} from '../../redux/features/authSlice';
+
+const RoleSelectionScreen = ({navigation}: any) => {
+  const dispatch = useDispatch();
+
+  const handleRoleSelection = (role: 'librarian' | 'user') => {
+    dispatch(setUserRole(role));
+    navigation.navigate('Login');
+  };
+
+  return (
+    <ImageBackground
+      source={require('../../assets/images/izmirim_resized.png')}
+      style={styles.backgroundImage}>
+      <View style={styles.overlay}>
+        <View style={styles.container}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Kütüphane Sistemi</Text>
+            <Text style={styles.subtitle}>Hoş Geldiniz</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.roleButton}
+              onPress={() => handleRoleSelection('librarian')}>
+              <Text style={styles.buttonText}>Kütüphaneci Girişi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.roleButton}
+              onPress={() => handleRoleSelection('user')}>
+              <Text style={styles.buttonText}>Kullanıcı Girişi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </ImageBackground>
+  );
+};
+
+const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  titleContainer: {
+    width: '100%',
+    marginLeft: 10,
+    backgroundColor: 'red',
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+    color: '#fff',
+  },
+  subtitle: {
+    fontSize: 24,
+    marginBottom: 50,
+    color: '#fff',
+    width: '90%',
+    marginLeft: 10,
+  },
+  buttonContainer: {
+    width: '100%',
+    maxWidth: 400,
+    gap: 20,
+  },
+  roleButton: {
+    backgroundColor: '#2C4CBEFF',
+    padding: 20,
+    borderRadius: 12,
+    width: '100%',
+  },
+  buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+});
+
+export default RoleSelectionScreen;
