@@ -40,6 +40,7 @@ const LoginScreen = ({navigation}: any) => {
         login({email, password, role: userRole}),
       ).unwrap();
       console.log('Login başarılı:', result);
+      console.log('Kullanıcı rolü:', result.user.role);
     } catch (error) {
       console.error('Login hatası:', error);
     }

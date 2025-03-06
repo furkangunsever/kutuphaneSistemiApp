@@ -18,7 +18,7 @@ const initialState: AuthState = {
   userRole: null,
 };
 
-const BASE_URL = 'http://192.168.119.139:5000/api';
+const BASE_URL = 'http://192.168.119.219:5000/api';
 
 export const login = createAsyncThunk(
   'auth/login',
@@ -73,7 +73,12 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   'auth/register',
   async (
-    {name,email, password, role}: {name:string; email: string; password: string; role: string},
+    {
+      name,
+      email,
+      password,
+      role,
+    }: {name: string; email: string; password: string; role: string},
     {rejectWithValue},
   ) => {
     try {
@@ -147,7 +152,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        state.userRole = action.payload.user.role;
+        state.userRole = action.payload.user.role as 'librarian' | 'user';
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;

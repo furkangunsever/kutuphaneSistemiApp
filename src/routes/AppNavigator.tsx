@@ -39,21 +39,21 @@ const AppNavigator = () => {
         ) : (
           // App Stack - Role'e göre yönlendirme
           <>
-            {userRole === 'user' ? (
-              <Stack.Screen
-                name="UserHome"
-                component={UserHomeScreen}
-                options={{
-                  title: 'Kullanıcı Paneli',
-                  headerLeft: () => null,
-                }}
-              />
-            ) : (
+            {userRole === 'librarian' ? (
               <Stack.Screen
                 name="LibrarianHome"
                 component={LibrarianHomeScreen}
                 options={{
                   title: 'Kütüphaneci Paneli',
+                  headerLeft: () => null,
+                }}
+              />
+            ) : (
+              <Stack.Screen
+                name="UserHome"
+                component={UserHomeScreen}
+                options={{
+                  title: 'Kullanıcı Paneli',
                   headerLeft: () => null,
                 }}
               />

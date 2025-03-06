@@ -1,3 +1,3 @@
 const leftarrow = require('./leftarrow.png');
-
-export {leftarrow};
+const plus = require('./plus.png');
+export {leftarrow, plus};
