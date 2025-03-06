@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
@@ -29,6 +30,9 @@ const BookList = ({onEdit, onDelete}: BookListProps) => {
 
   const renderItem = ({item}: {item: Book}) => (
     <View style={styles.bookItem}>
+      {item.imageUrl && (
+        <Image source={{uri: item.imageUrl}} style={styles.bookImage} />
+      )}
       <View style={styles.bookInfo}>
         <Text style={styles.bookTitle}>{item.title}</Text>
         <Text style={styles.bookAuthor}>Yazar: {item.author}</Text>
@@ -138,6 +142,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginTop: 24,
+  },
+  bookImage: {
+    width: 80,
+    height: 120,
+    borderRadius: 8,
+    marginRight: 12,
   },
 });
 

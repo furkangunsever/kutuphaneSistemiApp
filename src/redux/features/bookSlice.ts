@@ -2,7 +2,7 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {RootState} from '../store';
 import {Book} from '../../types/book';
-
+import {BASE_URL} from '../../config/base_url';
 interface BookState {
   books: Book[];
   isLoading: boolean;
@@ -14,8 +14,6 @@ const initialState: BookState = {
   isLoading: false,
   error: null,
 };
-
-const BASE_URL = 'http://192.168.119.219:5000/api';
 
 // Kitapları getir
 export const fetchBooks = createAsyncThunk(

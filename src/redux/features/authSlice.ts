@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {BASE_URL} from '../../config/base_url';
 
 interface AuthState {
   user: any;
@@ -18,7 +19,6 @@ const initialState: AuthState = {
   userRole: null,
 };
 
-const BASE_URL = 'http://192.168.119.219:5000/api';
 
 export const login = createAsyncThunk(
   'auth/login',

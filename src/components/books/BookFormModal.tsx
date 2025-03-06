@@ -9,11 +9,14 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Image,
 } from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../redux/store';
 import {addBook, updateBook} from '../../redux/features/bookSlice';
 import {Book} from '../../types/book';
+import {BASE_URL} from '../../config/base_url';
 
 interface BookFormModalProps {
   visible: boolean;
@@ -24,7 +27,7 @@ interface BookFormModalProps {
 const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const isLoading = useSelector((state: RootState) => state.books.isLoading);
-
+  const token = useSelector((state: RootState) => state.auth.token);
   const [formData, setFormData] = useState({
     title: '',
     author: '',
@@ -33,6 +36,12 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
     quantity: '1',
     status: 'available' as 'available' | 'borrowed' | 'reserved',
   });
+
+  const [selectedImage, setSelectedImage] = useState<{
+    uri: string;
+    type: string;
+    name: string;
+  } | null>(null);
 
   useEffect(() => {
     if (editingBook) {
@@ -46,6 +55,22 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
       });
     }
   }, [editingBook]);
+
+  const handleImagePick = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 0.8,
+    });
+
+    if (result.assets && result.assets[0]) {
+      const asset = result.assets[0];
+      setSelectedImage({
+        uri: asset.uri!,
+        type: asset.type!,
+        name: asset.fileName || 'image.jpg',
+      });
+    }
+  };
 
   const handleSubmit = async () => {
     if (!formData.title.trim()) {
@@ -68,12 +93,37 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
     const cleanISBN = formData.ISBN.replace(/[-\s]/g, '');
 
     try {
+      let imageUrl = editingBook?.imageUrl;
+
+      // Eğer yeni bir görsel seçildiyse, önce onu yükle
+      if (selectedImage) {
+        const formData = new FormData();
+        formData.append('image', {
+          uri: selectedImage.uri,
+          type: selectedImage.type,
+          name: selectedImage.name,
+        });
+
+        const uploadResponse = await fetch(`${BASE_URL}/books/add`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const uploadResult = await uploadResponse.json();
+        imageUrl = uploadResult.imageUrl;
+      }
+
       if (editingBook) {
         await dispatch(
           updateBook({
             id: editingBook._id,
             bookData: {
               ...formData,
+              imageUrl,
               ISBN: cleanISBN,
               publishYear: parseInt(formData.publishYear),
               quantity: parseInt(formData.quantity),
@@ -85,6 +135,7 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
         await dispatch(
           addBook({
             ...formData,
+            imageUrl,
             ISBN: cleanISBN,
             publishYear: parseInt(formData.publishYear),
             quantity: parseInt(formData.quantity),
@@ -187,6 +238,23 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
               />
             </View>
 
+            <View style={styles.imageContainer}>
+              <TouchableOpacity
+                style={styles.imagePickerButton}
+                onPress={handleImagePick}>
+                {selectedImage || editingBook?.imageUrl ? (
+                  <Image
+                    source={{
+                      uri: selectedImage?.uri || editingBook?.imageUrl,
+                    }}
+                    style={styles.bookImage}
+                  />
+                ) : (
+                  <Text style={styles.imagePickerText}>Kitap Görseli Seç</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[styles.button, styles.cancelButton]}
@@ -275,6 +343,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  imageContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  imagePickerButton: {
+    width: 150,
+    height: 200,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+  },
+  bookImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+  },
+  imagePickerText: {
+    color: '#666',
+    fontSize: 16,
+  },
 });
 
-export default BookFormModal; 
+export default BookFormModal;
