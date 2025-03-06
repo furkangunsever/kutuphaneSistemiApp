@@ -73,18 +73,19 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   'auth/register',
   async (
-    {email, password, role}: {email: string; password: string; role: string},
+    {name,email, password, role}: {name:string; email: string; password: string; role: string},
     {rejectWithValue},
   ) => {
     try {
       console.log('Register isteği gönderiliyor:', {
         url: `${BASE_URL}/auth/register`,
-        data: {email, password, role},
+        data: {name, email, password, role},
       });
 
       const response = await axios.post(
         `${BASE_URL}/auth/register`,
         {
+          name,
           email,
           password,
           role,

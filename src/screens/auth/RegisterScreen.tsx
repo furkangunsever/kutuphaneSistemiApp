@@ -14,6 +14,7 @@ import {AppDispatch, RootState} from '../../redux/store';
 import {izmirim_resized} from '../../assets/images';
 
 const RegisterScreen = ({navigation}: any) => {
+  const [name,setName]= useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -21,7 +22,7 @@ const RegisterScreen = ({navigation}: any) => {
   const userRole = useSelector((state: RootState) => state.auth.userRole);
 
   const handleRegister = async () => {
-    if (!email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword) {
       Alert.alert('Hata', 'Lütfen tüm alanları doldurunuz');
       return;
     }
@@ -38,7 +39,7 @@ const RegisterScreen = ({navigation}: any) => {
 
     try {
       const result = await dispatch(
-        register({email, password, role: userRole}),
+        register({name, email, password, role: userRole}),
       ).unwrap();
       if (result) {
         Alert.alert('Başarılı', 'Kayıt işlemi başarıyla tamamlandı', [
@@ -61,6 +62,14 @@ const RegisterScreen = ({navigation}: any) => {
           <Text style={styles.subtitle}>
             {userRole === 'librarian' ? 'Kütüphaneci Kaydı' : 'Kullanıcı Kaydı'}
           </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="İsim"
+            placeholderTextColor="#fff"
+            value={name}
+            onChangeText={setName}
+            autoCapitalize="none"
+          />
           <TextInput
             style={styles.input}
             placeholder="Email"
