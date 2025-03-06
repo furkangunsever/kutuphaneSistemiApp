@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,18 +7,25 @@ import {
   StyleSheet,
   Alert,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {login} from '../../redux/features/authSlice';
 import {AppDispatch, RootState} from '../../redux/store';
+import {izmirim_resized} from '../../assets/images';
+import {Dimensions} from 'react-native';
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const LoginScreen = ({navigation}: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch<AppDispatch>();
   const userRole = useSelector((state: RootState) => state.auth.userRole);
+  const isLoading = useSelector((state: RootState) => state.auth.isLoading);
+  const error = useSelector((state: RootState) => state.auth.error);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Hata', 'Lütfen email ve şifre giriniz');
       return;
@@ -27,13 +34,25 @@ const LoginScreen = ({navigation}: any) => {
       Alert.alert('Hata', 'Lütfen rol seçiniz');
       return;
     }
-    dispatch(login({email, password, role: userRole}));
+
+    try {
+      const result = await dispatch(
+        login({email, password, role: userRole}),
+      ).unwrap();
+      console.log('Login başarılı:', result);
+    } catch (error) {
+      console.error('Login hatası:', error);
+    }
   };
 
+  useEffect(() => {
+    if (error) {
+      Alert.alert('Hata', error);
+    }
+  }, [error]);
+
   return (
-    <ImageBackground
-      source={require('../../assets/images/izmirim_resized.png')}
-      style={styles.backgroundImage}>
+    <ImageBackground source={izmirim_resized} style={styles.backgroundImage}>
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.title}>Giriş Yap</Text>
@@ -59,8 +78,18 @@ const LoginScreen = ({navigation}: any) => {
             onChangeText={setPassword}
             secureTextEntry
           />
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Giriş Yap</Text>
+          <TouchableOpacity
+            style={[
+              styles.loginButton,
+              isLoading && styles.loginButtonDisabled,
+            ]}
+            onPress={handleLogin}
+            disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Giriş Yap</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.registerLink}
@@ -119,6 +148,9 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     marginTop: 20,
+  },
+  loginButtonDisabled: {
+    backgroundColor: 'rgba(0, 122, 255, 0.5)',
   },
   buttonText: {
     color: '#fff',

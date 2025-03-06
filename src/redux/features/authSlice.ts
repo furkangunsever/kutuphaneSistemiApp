@@ -18,6 +18,8 @@ const initialState: AuthState = {
   userRole: null,
 };
 
+const BASE_URL = 'http://192.168.119.139:5000/api';
+
 export const login = createAsyncThunk(
   'auth/login',
   async (
@@ -25,18 +27,45 @@ export const login = createAsyncThunk(
     {rejectWithValue},
   ) => {
     try {
+      console.log('Login isteği gönderiliyor:', {
+        url: `${BASE_URL}/auth/login`,
+        data: {email, password, role},
+      });
+
       const response = await axios.post(
-        'http://localhost:5000/api/auth/login',
+        `${BASE_URL}/auth/login`,
         {
           email,
           password,
           role,
         },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          timeout: 10000,
+        },
       );
+
+      console.log('Login yanıtı:', response.data);
       await AsyncStorage.setItem('token', response.data.token);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response.data.message);
+      console.error('Login hatası:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+        fullError: error,
+      });
+
+      if (error.message === 'Network Error') {
+        return rejectWithValue(
+          'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.',
+        );
+      }
+      return rejectWithValue(
+        error.response?.data?.message || 'Giriş işlemi başarısız oldu',
+      );
     }
   },
 );
@@ -48,17 +77,47 @@ export const register = createAsyncThunk(
     {rejectWithValue},
   ) => {
     try {
+      console.log('Register isteği gönderiliyor:', {
+        url: `${BASE_URL}/auth/register`,
+        data: {email, password, role},
+      });
+
       const response = await axios.post(
-        'http://localhost:5000/api/auth/register',
+        `${BASE_URL}/auth/register`,
         {
           email,
           password,
           role,
         },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          timeout: 10000,
+        },
       );
+
+      console.log('Register yanıtı:', response.data);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response.data.message);
+      console.error('Register hatası:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+        fullError: error,
+      });
+
+      if (error.message === 'Network Error') {
+        return rejectWithValue(
+          'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.',
+        );
+      }
+
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          'Kayıt işlemi başarısız oldu',
+      );
     }
   },
 );
@@ -87,6 +146,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.userRole = action.payload.user.role;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;

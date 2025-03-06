@@ -11,6 +11,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {register} from '../../redux/features/authSlice';
 import {AppDispatch, RootState} from '../../redux/store';
+import {izmirim_resized} from '../../assets/images';
 
 const RegisterScreen = ({navigation}: any) => {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ const RegisterScreen = ({navigation}: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const userRole = useSelector((state: RootState) => state.auth.userRole);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!email || !password || !confirmPassword) {
       Alert.alert('Hata', 'Lütfen tüm alanları doldurunuz');
       return;
@@ -35,13 +36,25 @@ const RegisterScreen = ({navigation}: any) => {
       return;
     }
 
-    dispatch(register({email, password, role: userRole}));
+    try {
+      const result = await dispatch(
+        register({email, password, role: userRole}),
+      ).unwrap();
+      if (result) {
+        Alert.alert('Başarılı', 'Kayıt işlemi başarıyla tamamlandı', [
+          {
+            text: 'Tamam',
+            onPress: () => navigation.navigate('Login'),
+          },
+        ]);
+      }
+    } catch (error: any) {
+      Alert.alert('Hata', error || 'Kayıt işlemi sırasında bir hata oluştu');
+    }
   };
 
   return (
-    <ImageBackground
-      source={require('../../assets/images/izmirim_resized.png')}
-      style={styles.backgroundImage}>
+    <ImageBackground source={izmirim_resized} style={styles.backgroundImage}>
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.title}>Kayıt Ol</Text>

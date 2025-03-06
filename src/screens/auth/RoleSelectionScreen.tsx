@@ -5,10 +5,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
+  StatusBar,
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 import {setUserRole} from '../../redux/features/authSlice';
-
+import {izmirim_resized} from '../../assets/images';
 const RoleSelectionScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
 
@@ -18,9 +19,12 @@ const RoleSelectionScreen = ({navigation}: any) => {
   };
 
   return (
-    <ImageBackground
-      source={require('../../assets/images/izmirim_resized.png')}
-      style={styles.backgroundImage}>
+    <ImageBackground source={izmirim_resized} style={styles.backgroundImage}>
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="transparent"
+      />
       <View style={styles.overlay}>
         <View style={styles.container}>
           <View style={styles.titleContainer}>
@@ -64,7 +68,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     width: '100%',
     marginLeft: 10,
-    backgroundColor: 'red',
+    height: '50%',
   },
   title: {
     fontSize: 36,
@@ -78,7 +82,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     color: '#fff',
     width: '90%',
-    marginLeft: 10,
+    textAlign: 'center',
   },
   buttonContainer: {
     width: '100%',
