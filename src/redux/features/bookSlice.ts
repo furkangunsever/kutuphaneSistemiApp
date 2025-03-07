@@ -44,7 +44,7 @@ export const fetchBooks = createAsyncThunk(
 // Kitap ekle
 export const addBook = createAsyncThunk(
   'books/addBook',
-  async (bookData: Omit<Book, '_id'>, {rejectWithValue, getState}) => {
+  async (bookData: FormData, {rejectWithValue, getState}) => {
     try {
       const token = (getState() as RootState).auth.token;
 
@@ -52,24 +52,15 @@ export const addBook = createAsyncThunk(
         return rejectWithValue("Yetkilendirme token'ı bulunamadı");
       }
 
-      const response = await axios.post(`${BASE_URL}/books`, bookData, {
+      const response = await axios.post(`${BASE_URL}/librarian/books/add`, bookData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       });
       return response.data;
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        return rejectWithValue(
-          'Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.',
-        );
-      }
-
-      if (error.response?.data?.message?.includes('E11000')) {
-        return rejectWithValue('Bu ISBN numarası ile daha önce kitap eklenmiş');
-      }
-
+      console.error('Kitap ekleme hatası:', error.response?.data);
       return rejectWithValue(
         error.response?.data?.message || 'Kitap eklenirken bir hata oluştu',
       );

@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Platform,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useDispatch, useSelector} from 'react-redux';
@@ -57,18 +58,25 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
   }, [editingBook]);
 
   const handleImagePick = async () => {
-    const result = await launchImageLibrary({
-      mediaType: 'photo',
-      quality: 0.8,
-    });
-
-    if (result.assets && result.assets[0]) {
-      const asset = result.assets[0];
-      setSelectedImage({
-        uri: asset.uri!,
-        type: asset.type!,
-        name: asset.fileName || 'image.jpg',
+    try {
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 0.8,
+        maxWidth: 800,
+        maxHeight: 800,
       });
+
+      if (result.assets && result.assets[0]) {
+        const asset = result.assets[0];
+        setSelectedImage({
+          uri: asset.uri,
+          type: asset.type || 'image/jpeg',
+          name: asset.fileName || 'image.jpg',
+        });
+      }
+    } catch (error) {
+      console.error('Görsel seçme hatası:', error);
+      Alert.alert('Hata', 'Görsel seçilirken bir hata oluştu');
     }
   };
 
@@ -93,28 +101,29 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
     const cleanISBN = formData.ISBN.replace(/[-\s]/g, '');
 
     try {
-      let imageUrl = editingBook?.imageUrl;
+      const formDataToSend = new FormData();
+      const bookData = {
+        title: formData.title,
+        author: formData.author,
+        isbn: cleanISBN,
+        publishYear: formData.publishYear,
+        quantity: formData.quantity,
+        status: formData.status,
+      };
 
-      // Eğer yeni bir görsel seçildiyse, önce onu yükle
+      formDataToSend.append('title', bookData.title);
+      formDataToSend.append('author', bookData.author);
+      formDataToSend.append('isbn', bookData.isbn);
+      formDataToSend.append('publishYear', bookData.publishYear);
+      formDataToSend.append('quantity', bookData.quantity);
+      formDataToSend.append('status', bookData.status);
+
       if (selectedImage) {
-        const formData = new FormData();
-        formData.append('image', {
-          uri: selectedImage.uri,
+        formDataToSend.append('image', {
+          uri: Platform.OS === 'ios' ? selectedImage.uri.replace('file://', '') : selectedImage.uri,
           type: selectedImage.type,
           name: selectedImage.name,
         });
-
-        const uploadResponse = await fetch(`${BASE_URL}/books/add`, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const uploadResult = await uploadResponse.json();
-        imageUrl = uploadResult.imageUrl;
       }
 
       if (editingBook) {
@@ -122,33 +131,22 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
           updateBook({
             id: editingBook._id,
             bookData: {
-              ...formData,
-              imageUrl,
-              ISBN: cleanISBN,
-              publishYear: parseInt(formData.publishYear),
-              quantity: parseInt(formData.quantity),
+              ...bookData,
+              publishYear: parseInt(bookData.publishYear),
+              quantity: parseInt(bookData.quantity),
             },
           }),
         ).unwrap();
         Alert.alert('Başarılı', 'Kitap başarıyla güncellendi');
       } else {
-        await dispatch(
-          addBook({
-            ...formData,
-            imageUrl,
-            ISBN: cleanISBN,
-            publishYear: parseInt(formData.publishYear),
-            quantity: parseInt(formData.quantity),
-          }),
-        ).unwrap();
+        await dispatch(addBook(formDataToSend)).unwrap();
         Alert.alert('Başarılı', 'Kitap başarıyla eklendi');
       }
       onClose();
       resetForm();
     } catch (error: any) {
-      const errorMessage =
-        typeof error === 'string' ? error : 'Bir hata oluştu';
-      Alert.alert('Hata', errorMessage);
+      console.error('Form gönderme hatası:', error);
+      Alert.alert('Hata', error.message || 'Kitap eklenirken bir hata oluştu');
     }
   };
 
