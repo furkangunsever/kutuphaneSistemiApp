@@ -7,4 +7,5 @@ export interface Book {
   quantity: number;
   status: 'available' | 'borrowed' | 'reserved';
   imageUrl?: string; // Kitap görseli için URL
+  qrCode?: string; // QR kod URL'i için opsiyonel alan
 } 
