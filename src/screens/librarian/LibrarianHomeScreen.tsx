@@ -6,12 +6,15 @@ import {fetchBooks, deleteBook} from '../../redux/features/bookSlice';
 import BookList from '../../components/books/BookList';
 import BookFormModal from '../../components/books/BookFormModal';
 import {Book} from '../../types/book';
-import {leftarrow, plus} from '../../assets/icons';
+import {leftarrow, plus, qrscan} from '../../assets/icons';
+import QRScanner from '../../components/scanner/QRScanner';
+import {borrowBook} from '../../redux/features/loanSlice';
 
 const LibrarianHomeScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | undefined>(undefined);
+  const [isScannerVisible, setIsScannerVisible] = useState(false);
 
   useEffect(() => {
     loadBooks();
@@ -56,19 +59,52 @@ const LibrarianHomeScreen = () => {
     loadBooks(); // Listeyi yenile
   };
 
+  const handleQRCodeScanned = async (data: string) => {
+    try {
+      const bookData = JSON.parse(data);
+      if (bookData.id) {
+        await dispatch(borrowBook(bookData.id)).unwrap();
+        Alert.alert('Başarılı', 'Kitap başarıyla ödünç alındı');
+        loadBooks();
+      }
+    } catch (error) {
+      Alert.alert('Hata', 'Geçersiz QR kod veya işlem başarısız');
+    } finally {
+      setIsScannerVisible(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <BookList onEdit={handleEdit} onDelete={handleDelete} />
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => setIsModalVisible(true)}>
-        <Image source={plus} style={styles.plusIcon} />
-      </TouchableOpacity>
-      <BookFormModal
-        visible={isModalVisible}
-        onClose={handleModalClose}
-        editingBook={editingBook}
-      />
+      {!isScannerVisible ? (
+        <>
+          <BookList onEdit={handleEdit} onDelete={handleDelete} />
+          <View style={styles.fabContainer}>
+            <TouchableOpacity
+              style={[styles.fab, styles.scanFab]}
+              onPress={() => setIsScannerVisible(true)}>
+              <Image source={qrscan} style={styles.fabIcon} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.fab, styles.addFab]}
+              onPress={() => setIsModalVisible(true)}>
+              <Image source={plus} style={styles.fabIcon} />
+            </TouchableOpacity>
+          </View>
+          <BookFormModal
+            visible={isModalVisible}
+            onClose={handleModalClose}
+            editingBook={editingBook}
+          />
+        </>
+      ) : (
+        <View style={styles.scannerContainer}>
+          <QRScanner
+            onQRCodeScanned={handleQRCodeScanned}
+            onClose={() => setIsScannerVisible(false)}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -98,6 +134,33 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     color: 'white',
+  },
+  fabContainer: {
+    position: 'absolute',
+    right: 10,
+    bottom: 50,
+    flexDirection: 'row',
+  },
+  scanFab: {
+    backgroundColor: '#E07727FF',
+    bottom: 100,
+  },
+  addFab: {
+    backgroundColor: '#2C4CBE',
+  },
+  fabIcon: {
+    width: 24,
+    height: 24,
+    color: 'white',
+  },
+  scannerContainer: {
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 999,
   },
 });
 
