@@ -133,8 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#121921',
   },
   conteiner_2: {
-    backgroundColor: 'white',
-    marginTop: windowHeight * 0.03,
+    backgroundColor: '#fff',
     borderTopLeftRadius: windowWidth * 0.07,
     borderTopRightRadius: windowWidth * 0.07,
     padding: 10,
@@ -144,6 +143,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: 20,
+    paddingBottom: 15,
     paddingHorizontal: 20,
   },
   title: {

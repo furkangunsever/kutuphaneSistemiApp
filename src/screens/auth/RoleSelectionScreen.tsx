@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   roleButton: {
-    backgroundColor: '#121921FF',
+    backgroundColor: '#2C4CBEFF',
     padding: 20,
     borderRadius: 12,
     width: '100%',

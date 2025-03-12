@@ -36,7 +36,7 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>PROFİL</Text>
+        <Text style={styles.title}>Profilim</Text>
       </View>
 
       <ScrollView style={styles.content}>
@@ -91,10 +91,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#121921',
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingTop: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 15,
   },
   title: {
     fontSize: 25,
@@ -103,7 +102,6 @@ const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: 'white',
-    marginTop: windowHeight * 0.05,
     borderTopLeftRadius: windowWidth * 0.07,
     borderTopRightRadius: windowWidth * 0.07,
     padding: 20,
