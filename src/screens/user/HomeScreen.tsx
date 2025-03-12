@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -12,14 +12,20 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../redux/store';
 import {fetchBooks} from '../../redux/features/userBookSlice';
+import BookQRModal from '../../components/books/BookQRModal';
+import {notification, qr_code} from '../../assets/icons';
+import {Book} from '../../types/book';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const HomeScreen = () => {
+  const {user} = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
   const {books, isLoading, error} = useSelector(
     (state: RootState) => state.userBooks,
   );
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [isQRModalVisible, setIsQRModalVisible] = useState(false);
 
   useEffect(() => {
     loadBooks();
@@ -29,10 +35,15 @@ const HomeScreen = () => {
     dispatch(fetchBooks());
   };
 
+  const handleShowQR = (book: Book) => {
+    setSelectedBook(book);
+    setIsQRModalVisible(true);
+  };
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2C4CBE" />
+        <ActivityIndicator size="large" color="#121921" />
       </View>
     );
   }
@@ -53,37 +64,14 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>KÜTÜPHANE</Text>
+        <Text style={styles.title}>Hoşgeldin, {user.name}</Text>
         <TouchableOpacity>
-          <Text style={styles.notificationIcon}>🔔</Text>
+          <Image source={notification} style={styles.notificationIcon} />
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.conteiner_2}>
         <View style={styles.statsContainer}>
-          
-
-          <View style={styles.statsButtons}>
-            <TouchableOpacity style={styles.statsButton}>
-              <Text style={styles.statsButtonText}>Müsait Kitaplar</Text>
-              <Text style={styles.statsButtonCount}>
-                {availableBooks.length}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.statsButton, styles.statsButtonGray]}>
-              <Text style={styles.statsButtonText}>Tüm Kitaplar</Text>
-              <Text style={styles.statsButtonCount}>{books.length}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.statsButton, styles.statsButtonGray]}>
-              <Text style={styles.statsButtonText}>Ödünç Alınan</Text>
-              <Text style={styles.statsButtonCount}>
-                {books.filter(book => book.status === 'borrowed').length}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.statsText}>Kitaplara göz atmaya ne dersin?</Text>
         </View>
 
         <View style={styles.bookList}>
@@ -102,7 +90,14 @@ const HomeScreen = () => {
                 )}
               </View>
               <View style={styles.bookInfo}>
-                <Text style={styles.bookTitle}>{book.title}</Text>
+                <View style={styles.bookTitleContainer}>
+                  <Text style={styles.bookTitle}>{book.title}</Text>
+                  <TouchableOpacity
+                    style={styles.qrButton}
+                    onPress={() => handleShowQR(book)}>
+                    <Image source={qr_code} style={styles.qrIcon} />
+                  </TouchableOpacity>
+                </View>
                 <Text style={styles.bookAuthor}>{book.author}</Text>
                 <View style={styles.bookDetails}>
                   <Text style={styles.detailText}>ISBN: {book.ISBN}</Text>
@@ -110,16 +105,24 @@ const HomeScreen = () => {
                     Yayın Yılı: {book.publishYear}
                   </Text>
                 </View>
-                <View style={styles.statusContainer}>
-                  <Text style={[styles.statusText, styles[book.status]]}>
-                    {book.status.toUpperCase()}
-                  </Text>
+                <View style={styles.bookActions}>
+                  <View style={styles.statusContainer}>
+                    <Text style={[styles.statusText, styles[book.status]]}>
+                      {book.status.toUpperCase()}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
           ))}
         </View>
       </ScrollView>
+
+      <BookQRModal
+        visible={isQRModalVisible}
+        onClose={() => setIsQRModalVisible(false)}
+        book={selectedBook}
+      />
     </View>
   );
 };
@@ -127,21 +130,21 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2C4CBE',
+    backgroundColor: '#121921',
   },
   conteiner_2: {
     backgroundColor: 'white',
-    marginTop: windowHeight * 0.05,
+    marginTop: windowHeight * 0.03,
     borderTopLeftRadius: windowWidth * 0.07,
     borderTopRightRadius: windowWidth * 0.07,
     padding: 10,
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: 20,
-    marginLeft: windowWidth * 0.2,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 25,
@@ -149,28 +152,26 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   notificationIcon: {
-    fontSize: 24,
+    width: 24,
+    height: 24,
+    fontWeight: 'bold',
   },
   statsContainer: {
     padding: 16,
     backgroundColor: '#fff',
     borderRadius: 12,
-    margin: 16,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    // margin: 16,
+    // elevation: 3,
   },
   statsText: {
     fontSize: 16,
-    color: '#333',
-    marginBottom: 16,
+    color: '#A28D4F',
+    fontWeight: 'bold',
   },
   statsHighlight: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2C4CBE',
+    color: '#121921',
   },
   statsButtons: {
     flexDirection: 'row',
@@ -200,10 +201,18 @@ const styles = StyleSheet.create({
   bookList: {
     padding: 16,
   },
+  bookTitleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: windowWidth * 0.5,
+  },
   bookItem: {
     flexDirection: 'row',
     marginBottom: 24,
     alignItems: 'flex-start',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#A8A8A8FF',
   },
   bookIndex: {
     fontSize: 24,
@@ -285,7 +294,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: '#2C4CBE',
+    backgroundColor: '#121921',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -299,6 +308,22 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 8,
+  },
+  bookActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  qrButton: {
+    padding: 8,
+    backgroundColor: '#E5E5E5',
+    borderRadius: 8,
+  },
+  qrIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#121921',
   },
 });
 

@@ -26,7 +26,7 @@ const BookList = ({onEdit, onDelete}: BookListProps) => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2C4CBE" />
+        <ActivityIndicator size="large" color="#121921" />
       </View>
     );
   }
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   bookStatus: {
     fontSize: 14,
-    color: '#2C4CBE',
+    color: '#121921',
     fontWeight: '500',
   },
   actionButtons: {
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   editButton: {
-    backgroundColor: '#2C4CBE',
+    backgroundColor: '#121921',
   },
   deleteButton: {
     backgroundColor: '#FF4444',

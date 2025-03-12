@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 20,
-    backgroundColor: '#2C4CBE',
+    backgroundColor: '#121921',
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     bottom: 100,
   },
   addFab: {
-    backgroundColor: '#2C4CBE',
+    backgroundColor: '#121921',
   },
   fabIcon: {
     width: 24,

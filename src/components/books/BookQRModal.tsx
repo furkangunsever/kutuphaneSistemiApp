@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   closeButton: {
-    backgroundColor: '#2C4CBE',
+    backgroundColor: '#121921',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,

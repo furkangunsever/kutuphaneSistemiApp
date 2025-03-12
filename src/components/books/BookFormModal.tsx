@@ -120,7 +120,10 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
 
       if (selectedImage) {
         formDataToSend.append('image', {
-          uri: Platform.OS === 'ios' ? selectedImage.uri.replace('file://', '') : selectedImage.uri,
+          uri:
+            Platform.OS === 'ios'
+              ? selectedImage.uri.replace('file://', '')
+              : selectedImage.uri,
           type: selectedImage.type,
           name: selectedImage.name,
         });
@@ -333,7 +336,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF4444',
   },
   submitButton: {
-    backgroundColor: '#2C4CBE',
+    backgroundColor: '#121921',
   },
   buttonText: {
     color: '#fff',

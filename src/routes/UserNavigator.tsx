@@ -13,8 +13,8 @@ const UserNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false ,
-        tabBarActiveTintColor: '#2C4CBE',
+        headerShown: false,
+        tabBarActiveTintColor: '#121921',
         tabBarInactiveTintColor: '#999',
         tabBarLabelStyle: {
           fontSize: 12,

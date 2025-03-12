@@ -88,7 +88,7 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2C4CBE',
+    backgroundColor: '#121921',
   },
   header: {
     flexDirection: 'row',
@@ -211,4 +211,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileScreen; 
+export default ProfileScreen;

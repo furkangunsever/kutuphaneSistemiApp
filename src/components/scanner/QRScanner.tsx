@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 50,
     alignSelf: 'center',
-    backgroundColor: '#2C4CBE',
+    backgroundColor: '#121921',
     padding: 15,
     borderRadius: 8,
   },
