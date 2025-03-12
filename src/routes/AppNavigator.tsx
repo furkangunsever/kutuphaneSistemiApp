@@ -8,6 +8,7 @@ import UserHomeScreen from '../screens/user/UserHomeScreen';
 import LibrarianHomeScreen from '../screens/librarian/LibrarianHomeScreen';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
+import UserNavigator from './UserNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -51,10 +52,9 @@ const AppNavigator = () => {
             ) : (
               <Stack.Screen
                 name="UserHome"
-                component={UserHomeScreen}
+                component={UserNavigator}
                 options={{
-                  title: 'Kullanıcı Paneli',
-                  headerLeft: () => null,
+                  headerShown: false,
                 }}
               />
             )}
