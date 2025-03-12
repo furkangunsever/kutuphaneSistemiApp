@@ -1,21 +1,86 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {useDispatch} from 'react-redux';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  ScrollView,
+} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../redux/features/authSlice';
+import {RootState} from '../../redux/store';
+import QRCode from 'react-native-qrcode-svg';
+import {user as userIcon} from '../../assets/icons';
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
+  const {user} = useSelector((state: RootState) => state.auth);
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
+  // QR kod için kullanıcı bilgilerini hazırla
+  const userQRData = JSON.stringify({
+    id: user?._id,
+    name: user?.name,
+    email: user?.email,
+    role: user?.role,
+  });
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profil</Text>
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
-      </TouchableOpacity>
+      <View style={styles.header}>
+        <Text style={styles.title}>PROFİL</Text>
+      </View>
+
+      <ScrollView style={styles.content}>
+        <View style={styles.profileSection}>
+          <View style={styles.avatarContainer}>
+            <Image source={userIcon} style={styles.avatar} />
+          </View>
+          <Text style={styles.userName}>{user?.name}</Text>
+          <Text style={styles.userEmail}>{user?.email}</Text>
+        </View>
+
+        <View style={styles.qrSection}>
+          <Text style={styles.sectionTitle}>Kullanıcı QR Kodu</Text>
+          <View style={styles.qrContainer}>
+            <QRCode
+              value={userQRData}
+              size={200}
+              backgroundColor="white"
+              color="black"
+            />
+          </View>
+          <Text style={styles.qrInfo}>
+            Bu QR kod kütüphanede işlem yaparken kullanılacaktır
+          </Text>
+        </View>
+
+        <View style={styles.infoSection}>
+          <Text style={styles.sectionTitle}>Kullanıcı Bilgileri</Text>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Üyelik Tipi</Text>
+            <Text style={styles.infoValue}>
+              {user?.role === 'user' ? 'Standart Üye' : 'Kütüphaneci'}
+            </Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Üyelik ID</Text>
+            <Text style={styles.infoValue}>{user?._id}</Text>
+          </View>
+        </View>
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };
@@ -23,19 +88,120 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#2C4CBE',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 20,
   },
   title: {
+    fontSize: 25,
+    color: '#fff',
+    fontWeight: '800',
+  },
+  content: {
+    backgroundColor: 'white',
+    marginTop: windowHeight * 0.05,
+    borderTopLeftRadius: windowWidth * 0.07,
+    borderTopRightRadius: windowWidth * 0.07,
+    padding: 20,
+  },
+  profileSection: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  avatarContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#E5E5E5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    tintColor: '#666',
+  },
+  userName: {
     fontSize: 24,
     fontWeight: 'bold',
-    padding: 16,
     color: '#333',
+    marginBottom: 4,
+  },
+  userEmail: {
+    fontSize: 16,
+    color: '#666',
+  },
+  qrSection: {
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 16,
+  },
+  qrContainer: {
+    padding: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  qrInfo: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+  },
+  infoSection: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  infoItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  infoLabel: {
+    fontSize: 16,
+    color: '#666',
+  },
+  infoValue: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
   },
   logoutButton: {
     backgroundColor: '#FF4444',
-    padding: 15,
-    margin: 16,
+    padding: 16,
     borderRadius: 8,
+    marginBottom: 30,
   },
   logoutButtonText: {
     color: '#fff',

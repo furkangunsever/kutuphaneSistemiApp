@@ -13,6 +13,7 @@ const UserNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={{
+        headerShown: false ,
         tabBarActiveTintColor: '#2C4CBE',
         tabBarInactiveTintColor: '#999',
         tabBarLabelStyle: {
