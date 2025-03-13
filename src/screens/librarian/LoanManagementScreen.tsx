@@ -44,8 +44,10 @@ const LoanManagementScreen = () => {
         if (scannedData.email && scannedData.name) {
           try {
             // Email ile kullanıcıyı bul
-            const userData = await dispatch(findUserByEmail(scannedData.email)).unwrap();
-            
+            const userData = await dispatch(
+              findUserByEmail(scannedData.email),
+            ).unwrap();
+
             dispatch(
               setSelectedUser({
                 _id: userData._id, // MongoDB ObjectId

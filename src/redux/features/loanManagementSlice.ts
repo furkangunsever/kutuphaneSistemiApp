@@ -165,13 +165,13 @@ export const findUserByEmail = createAsyncThunk(
   async (email: string, {rejectWithValue, getState}) => {
     try {
       const token = (getState() as RootState).auth.token;
-      
+
       if (!token) {
-        throw new Error('Yetkilendirme token\'ı bulunamadı');
+        throw new Error("Yetkilendirme token'ı bulunamadı");
       }
 
       const response = await axios.get(`${BASE_URL}/librarian/users/find`, {
-        params: { email },
+        params: {email},
         headers: {
           Authorization: `Bearer ${token}`,
         },
