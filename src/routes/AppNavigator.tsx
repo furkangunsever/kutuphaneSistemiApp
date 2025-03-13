@@ -9,6 +9,7 @@ import LibrarianHomeScreen from '../screens/librarian/LibrarianHomeScreen';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
 import UserNavigator from './UserNavigator';
+import LibrarianNavigator from './LibrarianNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,10 +44,9 @@ const AppNavigator = () => {
             {userRole === 'librarian' ? (
               <Stack.Screen
                 name="LibrarianHome"
-                component={LibrarianHomeScreen}
+                component={LibrarianNavigator}
                 options={{
-                  title: 'Kütüphaneci Paneli',
-                  headerLeft: () => null,
+                  headerShown: false,
                 }}
               />
             ) : (

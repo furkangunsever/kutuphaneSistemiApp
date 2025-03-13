@@ -3,6 +3,8 @@ import authReducer from './features/authSlice';
 import bookReducer from './features/bookSlice';
 import loanReducer from './features/loanSlice';
 import userBookReducer from './features/userBookSlice';
+import dashboardReducer from './features/dashboardSlice';
+import loanManagementReducer from './features/loanManagementSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +12,8 @@ export const store = configureStore({
     books: bookReducer,
     loan: loanReducer,
     userBooks: userBookReducer,
+    dashboard: dashboardReducer,
+    loanManagement: loanManagementReducer,
   },
 });
 
