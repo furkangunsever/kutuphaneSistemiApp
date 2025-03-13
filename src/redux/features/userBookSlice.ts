@@ -2,26 +2,40 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {RootState} from '../store';
 import {BASE_URL} from '../../config/base_url';
-import {Book} from '../../types/book';
 
-interface UserBookState {
-  books: Book[];
+interface Borrow {
+  id: string;
+  bookTitle: string;
+  bookAuthor: string;
+  bookImage: string | null;
+  isbn: string;
+  borrowDate: string;
+  dueDate: string;
+  returnDate: string | null;
+  status: 'active' | 'returned' | 'overdue';
+  notes: string | null;
+}
+
+interface UserBooksState {
+  borrows: Borrow[];
+  count: number;
   isLoading: boolean;
   error: string | null;
 }
 
-const initialState: UserBookState = {
-  books: [],
+const initialState: UserBooksState = {
+  borrows: [],
+  count: 0,
   isLoading: false,
   error: null,
 };
 
-export const fetchBooks = createAsyncThunk(
-  'userBooks/fetchBooks',
+export const fetchUserBorrows = createAsyncThunk(
+  'userBooks/fetchBorrows',
   async (_, {rejectWithValue, getState}) => {
     try {
       const token = (getState() as RootState).auth.token;
-      const response = await axios.get(`${BASE_URL}/books`, {
+      const response = await axios.get(`${BASE_URL}/borrows/my-borrows`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -29,7 +43,7 @@ export const fetchBooks = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || 'Kitaplar yüklenirken bir hata oluştu',
+        error.response?.data?.message || 'Ödünç bilgileri alınamadı',
       );
     }
   },
@@ -41,15 +55,16 @@ const userBookSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(fetchBooks.pending, state => {
+      .addCase(fetchUserBorrows.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchBooks.fulfilled, (state, action) => {
+      .addCase(fetchUserBorrows.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.books = action.payload;
+        state.borrows = action.payload.borrows;
+        state.count = action.payload.count;
       })
-      .addCase(fetchBooks.rejected, (state, action) => {
+      .addCase(fetchUserBorrows.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

@@ -27,7 +27,7 @@ const SearchScreen = () => {
   const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const {books} = useSelector((state: RootState) => state.userBooks);
+  const {books} = useSelector((state: RootState) => state.books);
 
   useEffect(() => {
     loadRecentSearches();
@@ -64,9 +64,10 @@ const SearchScreen = () => {
     setSearchQuery(query);
     if (query.trim()) {
       setIsSearching(true);
-      const results = books.filter(book =>
-        book.title.toLowerCase().includes(query.toLowerCase()),
-      );
+      const results =
+        books?.filter(book =>
+          book.title.toLowerCase().includes(query.toLowerCase()),
+        ) || [];
       setSearchResults(results);
       saveRecentSearch(query);
       setIsSearching(false);

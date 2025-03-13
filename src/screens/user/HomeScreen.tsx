@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../redux/store';
-import {fetchBooks} from '../../redux/features/userBookSlice';
+import {fetchBooks} from '../../redux/features/bookSlice';
 import BookQRModal from '../../components/books/BookQRModal';
 import {notification, qr_code} from '../../assets/icons';
 import {Book} from '../../types/book';
@@ -22,7 +22,7 @@ const HomeScreen = () => {
   const {user} = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
   const {books, isLoading, error} = useSelector(
-    (state: RootState) => state.userBooks,
+    (state: RootState) => state.books,
   );
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isQRModalVisible, setIsQRModalVisible] = useState(false);
@@ -59,12 +59,13 @@ const HomeScreen = () => {
     );
   }
 
-  const availableBooks = books.filter(book => book.status === 'available');
+  const availableBooks =
+    books?.filter(book => book.status === 'available') || [];
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Hoşgeldin, {user.name}</Text>
+        <Text style={styles.title}>Hoşgeldin, {user?.name}</Text>
         <TouchableOpacity>
           <Image source={notification} style={styles.notificationIcon} />
         </TouchableOpacity>
@@ -75,7 +76,7 @@ const HomeScreen = () => {
         </View>
 
         <View style={styles.bookList}>
-          {books.map((book, index) => (
+          {books?.map((book, index) => (
             <View key={book._id} style={styles.bookItem}>
               <Text style={styles.bookIndex}>{index + 1}</Text>
               <View style={styles.bookCover}>

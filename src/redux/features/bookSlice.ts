@@ -3,6 +3,7 @@ import axios from 'axios';
 import {RootState} from '../store';
 import {Book} from '../../types/book';
 import {BASE_URL} from '../../config/base_url';
+
 interface BookState {
   books: Book[];
   isLoading: boolean;
@@ -21,11 +22,6 @@ export const fetchBooks = createAsyncThunk(
   async (_, {rejectWithValue, getState}) => {
     try {
       const token = (getState() as RootState).auth.token;
-
-      if (!token) {
-        return rejectWithValue("Yetkilendirme token'ı bulunamadı");
-      }
-
       const response = await axios.get(`${BASE_URL}/books`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -34,8 +30,7 @@ export const fetchBooks = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message ||
-          'Kitaplar getirilirken bir hata oluştu',
+        error.response?.data?.message || 'Kitaplar yüklenirken bir hata oluştu',
       );
     }
   },
@@ -52,12 +47,16 @@ export const addBook = createAsyncThunk(
         return rejectWithValue("Yetkilendirme token'ı bulunamadı");
       }
 
-      const response = await axios.post(`${BASE_URL}/librarian/books/add`, bookData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
+      const response = await axios.post(
+        `${BASE_URL}/librarian/books/add`,
+        bookData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       return response.data;
     } catch (error: any) {
       console.error('Kitap ekleme hatası:', error.response?.data);
