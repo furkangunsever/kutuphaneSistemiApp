@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   loginButtonDisabled: {
-    backgroundColor: 'rgba(0, 122, 255, 0.5)',
+    backgroundColor: '#A28D4F',
   },
   buttonText: {
     color: '#fff',

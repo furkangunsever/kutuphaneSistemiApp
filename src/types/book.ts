@@ -4,6 +4,7 @@ export interface Book {
   author: string;
   ISBN: string;
   publishYear: number;
+  category: string;
   quantity: number;
   status: 'available' | 'borrowed' | 'reserved';
   imageUrl?: string; // Kitap görseli için URL

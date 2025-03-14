@@ -54,4 +54,4 @@ const loanSlice = createSlice({
   },
 });
 
-export default loanSlice.reducer; 
+export default loanSlice.reducer;

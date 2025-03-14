@@ -19,6 +19,7 @@ const BookQRModal = ({visible, onClose, book}: BookQRModalProps) => {
     author: book.author,
     ISBN: book.ISBN,
     publishYear: book.publishYear,
+    category: book.category,
     status: book.status,
   });
 
@@ -42,6 +43,7 @@ const BookQRModal = ({visible, onClose, book}: BookQRModalProps) => {
             <Text style={styles.detailText}>
               Yayın Yılı: {book.publishYear}
             </Text>
+            <Text style={styles.detailText}>Kategori: {book.category}</Text>
             <Text style={styles.detailText}>Durum: {book.status}</Text>
           </View>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>

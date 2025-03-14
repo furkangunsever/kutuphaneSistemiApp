@@ -13,8 +13,9 @@ import {
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {search as searchIcon} from '../../assets/icons';
+import {qr_code, search as searchIcon} from '../../assets/icons';
 import {Book} from '../../types/book';
+import BookQRModal from '../../components/books/BookQRModal';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -28,6 +29,8 @@ const SearchScreen = () => {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const {books} = useSelector((state: RootState) => state.books);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [isQRModalVisible, setIsQRModalVisible] = useState(false);
 
   useEffect(() => {
     loadRecentSearches();
@@ -80,6 +83,10 @@ const SearchScreen = () => {
     setSearchQuery(query);
     handleSearch(query);
   };
+  const handleShowQR = (item: Book) => {
+    setSelectedBook(item);
+    setIsQRModalVisible(true);
+  };
 
   const renderBookItem = ({item}: {item: Book}) => (
     <View style={styles.bookItem}>
@@ -95,10 +102,18 @@ const SearchScreen = () => {
         )}
       </View>
       <View style={styles.bookInfo}>
-        <Text style={styles.bookTitle}>{item.title}</Text>
+        <View style={styles.bookTitleContainer}>
+          <Text style={styles.bookTitle}>{item.title}</Text>
+          <TouchableOpacity
+            style={styles.qrButton}
+            onPress={() => handleShowQR(item)}>
+            <Image source={qr_code} style={styles.qrIcon} />
+          </TouchableOpacity>
+        </View>
         <Text style={styles.bookAuthor}>{item.author}</Text>
         <Text style={styles.bookDetails}>ISBN: {item.ISBN}</Text>
         <Text style={styles.bookDetails}>Yayın Yılı: {item.publishYear}</Text>
+        <Text style={styles.bookDetails}>Kategori: {item.category}</Text>
         <View style={styles.statusContainer}>
           <Text style={[styles.statusText, styles[item.status]]}>
             {item.status.toUpperCase()}
@@ -165,6 +180,11 @@ const SearchScreen = () => {
           </View>
         )}
       </View>
+      <BookQRModal
+        visible={isQRModalVisible}
+        onClose={() => setIsQRModalVisible(false)}
+        book={selectedBook}
+      />
     </View>
   );
 };
@@ -251,6 +271,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 4,
+  },
+  bookTitleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: windowWidth * 0.6,
+  },
+  qrButton: {
+    padding: 8,
+    backgroundColor: '#E5E5E5',
+    borderRadius: 8,
+  },
+  qrIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#121921',
   },
   bookAuthor: {
     fontSize: 14,

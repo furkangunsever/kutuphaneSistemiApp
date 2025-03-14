@@ -48,6 +48,7 @@ const BookList = ({books, onEdit, onDelete}: BookListProps) => {
           <Text style={styles.bookAuthor}>Yazar: {item.author}</Text>
           <Text style={styles.bookDetails}>ISBN: {item.ISBN}</Text>
           <Text style={styles.bookDetails}>Yayın Yılı: {item.publishYear}</Text>
+          <Text style={styles.bookDetails}>Kategori: {item.category}</Text>
           <Text style={styles.bookDetails}>Adet: {item.quantity}</Text>
           <Text style={styles.bookStatus}>Durum: {item.status}</Text>
         </View>

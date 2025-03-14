@@ -34,12 +34,13 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
     author: '',
     ISBN: '',
     publishYear: '',
+    category: '',
     quantity: '1',
     status: 'available' as 'available' | 'borrowed' | 'reserved',
   });
 
   const [selectedImage, setSelectedImage] = useState<{
-    uri: string;
+    uri?: string;
     type: string;
     name: string;
   } | null>(null);
@@ -51,6 +52,7 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
         author: editingBook.author,
         ISBN: editingBook.ISBN,
         publishYear: editingBook.publishYear.toString(),
+        category: editingBook.category,
         quantity: editingBook.quantity.toString(),
         status: editingBook.status,
       });
@@ -97,6 +99,10 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
       Alert.alert('Hata', 'Yayın yılı boş olamaz');
       return;
     }
+    if (!formData.category.trim()) {
+      Alert.alert('Hata', 'kategori boş olamaz');
+      return;
+    }
 
     const cleanISBN = formData.ISBN.replace(/[-\s]/g, '');
 
@@ -107,6 +113,7 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
         author: formData.author,
         isbn: cleanISBN,
         publishYear: formData.publishYear,
+        category: formData.category,
         quantity: formData.quantity,
         status: formData.status,
       };
@@ -115,6 +122,7 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
       formDataToSend.append('author', bookData.author);
       formDataToSend.append('isbn', bookData.isbn);
       formDataToSend.append('publishYear', bookData.publishYear);
+      formDataToSend.append('category', bookData.category);
       formDataToSend.append('quantity', bookData.quantity);
       formDataToSend.append('status', bookData.status);
 
@@ -122,7 +130,7 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
         formDataToSend.append('image', {
           uri:
             Platform.OS === 'ios'
-              ? selectedImage.uri.replace('file://', '')
+              ? selectedImage.uri?.replace('file://', '')
               : selectedImage.uri,
           type: selectedImage.type,
           name: selectedImage.name,
@@ -159,6 +167,7 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
       author: '',
       ISBN: '',
       publishYear: '',
+      category: '',
       quantity: '1',
       status: 'available',
     });
@@ -223,6 +232,17 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
                 }
                 placeholder="Yayın yılını giriniz"
                 keyboardType="numeric"
+              />
+            </View>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Kategori *</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.category}
+                onChangeText={text =>
+                  setFormData({...formData, category: text})
+                }
+                placeholder="Kategori giriniz"
               />
             </View>
 

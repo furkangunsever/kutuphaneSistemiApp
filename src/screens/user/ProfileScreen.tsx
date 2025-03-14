@@ -62,21 +62,6 @@ const ProfileScreen = () => {
             Bu QR kod kütüphanede işlem yaparken kullanılacaktır
           </Text>
         </View>
-
-        <View style={styles.infoSection}>
-          <Text style={styles.sectionTitle}>Kullanıcı Bilgileri</Text>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Üyelik Tipi</Text>
-            <Text style={styles.infoValue}>
-              {user?.role === 'user' ? 'Standart Üye' : 'Kütüphaneci'}
-            </Text>
-          </View>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Üyelik ID</Text>
-            <Text style={styles.infoValue}>{user?._id}</Text>
-          </View>
-        </View>
-
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
         </TouchableOpacity>
@@ -167,33 +152,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     textAlign: 'center',
-  },
-  infoSection: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  infoItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  infoLabel: {
-    fontSize: 16,
-    color: '#666',
-  },
-  infoValue: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
   },
   logoutButton: {
     backgroundColor: '#FF4444',

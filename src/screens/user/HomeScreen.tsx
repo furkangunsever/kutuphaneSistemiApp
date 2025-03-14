@@ -105,6 +105,9 @@ const HomeScreen = () => {
                   <Text style={styles.detailText}>
                     Yayın Yılı: {book.publishYear}
                   </Text>
+                  <Text style={styles.detailText}>
+                    Kategori: {book.category}
+                  </Text>
                 </View>
                 <View style={styles.bookActions}>
                   <View style={styles.statusContainer}>

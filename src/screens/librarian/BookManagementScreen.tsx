@@ -15,7 +15,7 @@ import {fetchBooks, deleteBook} from '../../redux/features/bookSlice';
 import BookList from '../../components/books/BookList';
 import BookFormModal from '../../components/books/BookFormModal';
 import {Book} from '../../types/book';
-import {leftarrow, plus, qrscan, search} from '../../assets/icons';
+import {plus, qrscan, search} from '../../assets/icons';
 import QRScanner from '../../components/scanner/QRScanner';
 
 const BookManagementScreen = () => {
@@ -107,11 +107,33 @@ const BookManagementScreen = () => {
 
   const categories = [
     {id: 'all', label: 'Tümü'},
-    {id: 'novel', label: 'Roman'},
-    {id: 'science', label: 'Bilim'},
-    {id: 'history', label: 'Tarih'},
-    {id: 'philosophy', label: 'Felsefe'},
+    {id: 'Roman', label: 'Roman'},
+    {id: 'Bilim', label: 'Bilim'},
+    {id: 'Tarih', label: 'Tarih'},
+    {id: 'Felsefe', label: 'Felsefe'},
   ];
+
+  const getFilteredBooks = () => {
+    let filteredBooks = books || [];
+
+    // Önce arama filtresini uygula
+    if (searchQuery.trim()) {
+      filteredBooks = filteredBooks.filter(
+        book =>
+          book.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          book.author?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          book.ISBN?.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+    }
+
+    // Sonra kategori filtresini uygula
+    if (filterCategory !== 'all') {
+      filteredBooks = filteredBooks.filter(
+        book => book.category === filterCategory,
+      );
+    } // Debug için
+    return filteredBooks;
+  };
 
   return (
     <View style={styles.container}>
@@ -163,7 +185,7 @@ const BookManagementScreen = () => {
           </View>
 
           <BookList
-            books={searchQuery.trim() ? searchResults : books}
+            books={getFilteredBooks()}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />

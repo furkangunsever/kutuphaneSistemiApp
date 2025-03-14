@@ -23,6 +23,7 @@ const AddBookForm = () => {
     author: '',
     ISBN: '',
     publishYear: '',
+    category: '',
     quantity: '1',
     status: 'available' as 'available' | 'borrowed' | 'reserved',
   });
@@ -44,6 +45,10 @@ const AddBookForm = () => {
       Alert.alert('Hata', 'Yayın yılı boş olamaz');
       return;
     }
+    if (!formData.category.trim()) {
+      Alert.alert('Hata', 'Kategori boş olamaz');
+      return;
+    }
 
     const cleanISBN = formData.ISBN.replace(/[-\s]/g, '');
 
@@ -62,6 +67,7 @@ const AddBookForm = () => {
         author: '',
         ISBN: '',
         publishYear: '',
+        category: '',
         quantity: '1',
         status: 'available',
       });
@@ -122,6 +128,15 @@ const AddBookForm = () => {
           onChangeText={text => setFormData({...formData, publishYear: text})}
           placeholder="Yayın yılını giriniz"
           keyboardType="numeric"
+        />
+      </View>
+      <View style={styles.formGroup}>
+        <Text style={styles.label}>Kategori *</Text>
+        <TextInput
+          style={styles.input}
+          value={formData.category}
+          onChangeText={text => setFormData({...formData, category: text})}
+          placeholder="Kategori giriniz"
         />
       </View>
 
