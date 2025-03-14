@@ -9,8 +9,8 @@ import {
   Text,
   ScrollView,
 } from 'react-native';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../redux/store';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../redux/store';
 import {fetchBooks, deleteBook} from '../../redux/features/bookSlice';
 import BookList from '../../components/books/BookList';
 import BookFormModal from '../../components/books/BookFormModal';
@@ -20,18 +20,40 @@ import QRScanner from '../../components/scanner/QRScanner';
 
 const BookManagementScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const {books} = useSelector((state: RootState) => state.books);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | undefined>(undefined);
   const [isScannerVisible, setIsScannerVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [filterCategory, setFilterCategory] = useState('all');
 
   useEffect(() => {
     loadBooks();
   }, []);
 
+  useEffect(() => {
+    handleSearch(searchQuery);
+  }, [books, searchQuery]);
+
   const loadBooks = () => {
     dispatch(fetchBooks());
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim()) {
+      const filteredBooks =
+        books?.filter(
+          book =>
+            book.title?.toLowerCase().includes(query.toLowerCase()) ||
+            book.author?.toLowerCase().includes(query.toLowerCase()) ||
+            book.ISBN?.toLowerCase().includes(query.toLowerCase()),
+        ) || [];
+      setSearchResults(filteredBooks);
+    } else {
+      setSearchResults(books || []);
+    }
   };
 
   const handleEdit = (book: Book) => {
@@ -104,7 +126,8 @@ const BookManagementScreen = () => {
                   style={styles.searchInput}
                   placeholder="Kitap adı, yazar veya ISBN ara..."
                   value={searchQuery}
-                  onChangeText={setSearchQuery}
+                  onChangeText={handleSearch}
+                  placeholderTextColor="#666"
                 />
               </View>
               <TouchableOpacity
@@ -122,7 +145,8 @@ const BookManagementScreen = () => {
                   key={category.id}
                   style={[
                     styles.categoryButton,
-                    filterCategory === category.id && styles.categoryButtonActive,
+                    filterCategory === category.id &&
+                      styles.categoryButtonActive,
                   ]}
                   onPress={() => setFilterCategory(category.id)}>
                   <Text
@@ -138,7 +162,11 @@ const BookManagementScreen = () => {
             </ScrollView>
           </View>
 
-          <BookList onEdit={handleEdit} onDelete={handleDelete} />
+          <BookList
+            books={searchQuery.trim() ? searchResults : books}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
 
           <TouchableOpacity
             style={styles.fab}
@@ -258,4 +286,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BookManagementScreen; 
+export default BookManagementScreen;

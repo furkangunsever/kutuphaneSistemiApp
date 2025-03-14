@@ -14,12 +14,13 @@ import {Book} from '../../types/book';
 import BookQRModal from './BookQRModal';
 
 interface BookListProps {
+  books: Book[];
   onEdit: (book: Book) => void;
   onDelete: (bookId: string) => void;
 }
 
-const BookList = ({onEdit, onDelete}: BookListProps) => {
-  const {books, isLoading} = useSelector((state: RootState) => state.books);
+const BookList = ({books, onEdit, onDelete}: BookListProps) => {
+  const {isLoading} = useSelector((state: RootState) => state.books);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isQRModalVisible, setIsQRModalVisible] = useState(false);
 
