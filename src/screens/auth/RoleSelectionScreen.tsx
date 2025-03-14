@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 import {setUserRole} from '../../redux/features/authSlice';
-import {izmirim_resized} from '../../assets/images';
+import {izmirim_resized_2} from '../../assets/images';
 const RoleSelectionScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
 
@@ -19,7 +19,7 @@ const RoleSelectionScreen = ({navigation}: any) => {
   };
 
   return (
-    <ImageBackground source={izmirim_resized} style={styles.backgroundImage}>
+    <ImageBackground source={izmirim_resized_2} style={styles.backgroundImage}>
       <StatusBar
         barStyle="light-content"
         translucent
@@ -38,7 +38,7 @@ const RoleSelectionScreen = ({navigation}: any) => {
               <Text style={styles.buttonText}>Kütüphaneci Girişi</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.roleButton}
+              style={styles.roleButton_2}
               onPress={() => handleRoleSelection('user')}>
               <Text style={styles.buttonText}>Kullanıcı Girişi</Text>
             </TouchableOpacity>
@@ -90,13 +90,19 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   roleButton: {
-    backgroundColor: '#2C4CBEFF',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 12,
+    width: '100%',
+  },
+  roleButton_2: {
+    backgroundColor: '#A28D4F',
     padding: 20,
     borderRadius: 12,
     width: '100%',
   },
   buttonText: {
-    color: '#fff',
+    color: 'black',
     textAlign: 'center',
     fontSize: 18,
     fontWeight: '600',

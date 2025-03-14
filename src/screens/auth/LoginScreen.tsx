@@ -12,7 +12,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {login} from '../../redux/features/authSlice';
 import {AppDispatch, RootState} from '../../redux/store';
-import {izmirim_resized} from '../../assets/images';
+import {izmirim_resized_2} from '../../assets/images';
 import {Dimensions} from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
@@ -53,7 +53,7 @@ const LoginScreen = ({navigation}: any) => {
   }, [error]);
 
   return (
-    <ImageBackground source={izmirim_resized} style={styles.backgroundImage}>
+    <ImageBackground source={izmirim_resized_2} style={styles.backgroundImage}>
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.title}>Giriş Yap</Text>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   loginButton: {
-    backgroundColor: 'rgba(0, 122, 255, 0.8)',
+    backgroundColor: '#A28D4F',
     padding: 15,
     borderRadius: 8,
     marginTop: 20,

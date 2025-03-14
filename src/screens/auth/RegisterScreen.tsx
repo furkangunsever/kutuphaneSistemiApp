@@ -11,10 +11,10 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {register} from '../../redux/features/authSlice';
 import {AppDispatch, RootState} from '../../redux/store';
-import {izmirim_resized} from '../../assets/images';
+import {izmirim_resized_2} from '../../assets/images';
 
 const RegisterScreen = ({navigation}: any) => {
-  const [name,setName]= useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -55,7 +55,7 @@ const RegisterScreen = ({navigation}: any) => {
   };
 
   return (
-    <ImageBackground source={izmirim_resized} style={styles.backgroundImage}>
+    <ImageBackground source={izmirim_resized_2} style={styles.backgroundImage}>
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.title}>Kayıt Ol</Text>
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   registerButton: {
-    backgroundColor: 'rgba(0, 122, 255, 0.8)',
+    backgroundColor: '#A28D4F',
     padding: 15,
     borderRadius: 8,
     marginTop: 20,

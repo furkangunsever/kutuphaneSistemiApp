@@ -49,7 +49,7 @@ export const fetchDashboardData = createAsyncThunk(
   async (_, {rejectWithValue, getState}) => {
     try {
       const token = (getState() as RootState).auth.token;
-      
+
       if (!token) {
         return rejectWithValue("Yetkilendirme token'ı bulunamadı");
       }
@@ -62,11 +62,14 @@ export const fetchDashboardData = createAsyncThunk(
       });
 
       // Son ödünç işlemlerini al
-      const borrowsResponse = await axios.get<{borrows: Borrow[]}>(`${BASE_URL}/librarian/borrows`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const borrowsResponse = await axios.get<{borrows: Borrow[]}>(
+        `${BASE_URL}/librarian/borrows`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       // İstatistikleri hesapla
       const books = booksResponse.data || [];
@@ -74,19 +77,24 @@ export const fetchDashboardData = createAsyncThunk(
 
       const statistics = {
         totalBooks: books.length,
-        borrowedBooks: books.filter((book: Book) => book.status === 'borrowed').length,
-        dueBooks: borrows.filter((borrow: Borrow) => 
-          borrow.status === 'borrowed' && 
-          new Date(borrow.dueDate) < new Date()
+        borrowedBooks: books.filter((book: Book) => book.status === 'borrowed')
+          .length,
+        dueBooks: borrows.filter(
+          (borrow: Borrow) =>
+            borrow.status === 'borrowed' &&
+            new Date(borrow.dueDate) < new Date(),
         ).length,
       };
 
       // Son 5 ödünç işlemini al ve null kontrolü yap
       const validBorrows = borrows
-        .filter((borrow): borrow is Borrow => 
-          Boolean(borrow && borrow.book && borrow.user && borrow.borrowDate)
+        .filter((borrow): borrow is Borrow =>
+          Boolean(borrow && borrow.book && borrow.user && borrow.borrowDate),
         )
-        .sort((a, b) => new Date(b.borrowDate).getTime() - new Date(a.borrowDate).getTime())
+        .sort(
+          (a, b) =>
+            new Date(b.borrowDate).getTime() - new Date(a.borrowDate).getTime(),
+        )
         .slice(0, 5);
 
       return {
@@ -123,4 +131,4 @@ const dashboardSlice = createSlice({
   },
 });
 
-export default dashboardSlice.reducer; 
+export default dashboardSlice.reducer;

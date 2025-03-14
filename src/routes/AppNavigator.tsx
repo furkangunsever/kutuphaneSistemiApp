@@ -4,8 +4,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import RoleSelectionScreen from '../screens/auth/RoleSelectionScreen';
-import UserHomeScreen from '../screens/user/UserHomeScreen';
-import LibrarianHomeScreen from '../screens/librarian/LibrarianHomeScreen';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
 import UserNavigator from './UserNavigator';
