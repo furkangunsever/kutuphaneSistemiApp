@@ -8,6 +8,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
 import UserNavigator from './UserNavigator';
 import LibrarianNavigator from './LibrarianNavigator';
+import NotificationScreen from '../screens/user/NotificationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,7 +17,7 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator>        
         {!token ? (
           // Auth Stack
           <>
@@ -58,6 +59,11 @@ const AppNavigator = () => {
             )}
           </>
         )}
+        <Stack.Screen
+          name="Notification"
+          component={NotificationScreen}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

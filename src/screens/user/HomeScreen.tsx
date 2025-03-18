@@ -18,7 +18,7 @@ import {Book} from '../../types/book';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-const HomeScreen = () => {
+const HomeScreen = ({navigation}: any) => {
   const {user} = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
   const {books, isLoading, error} = useSelector(
@@ -66,7 +66,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Hoşgeldin, {user?.name}</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
           <Image source={notification} style={styles.notificationIcon} />
         </TouchableOpacity>
       </View>
@@ -121,7 +121,6 @@ const HomeScreen = () => {
           ))}
         </View>
       </ScrollView>
-
       <BookQRModal
         visible={isQRModalVisible}
         onClose={() => setIsQRModalVisible(false)}
@@ -329,6 +328,7 @@ const styles = StyleSheet.create({
     height: 24,
     tintColor: '#121921',
   },
+  
 });
 
 export default HomeScreen;
