@@ -1,0 +1,6 @@
+<dict>
+    <!-- ... diğer ayarlar ... -->
+    <key>NSCameraUsageDescription</key>
+    <string>QR kodları okuyabilmek için kamera iznine ihtiyacımız var</string>
+    <!-- ... -->
+</dict> 

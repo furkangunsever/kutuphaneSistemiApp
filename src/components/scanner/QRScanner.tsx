@@ -5,9 +5,10 @@ import {
   useCameraDevice,
   useCodeScanner,
 } from 'react-native-vision-camera';
+import {decodeQRData} from '../../utils/qrUtils';
 
 interface QRScannerProps {
-  onQRCodeScanned: (data: string) => void;
+  onQRCodeScanned: (data: object) => void;
   onClose: () => void;
 }
 
@@ -19,8 +20,13 @@ const QRScanner = ({onQRCodeScanned, onClose}: QRScannerProps) => {
     codeTypes: ['qr'],
     onCodeScanned: codes => {
       if (codes.length > 0 && isScanning && codes[0].value != null) {
-        setIsScanning(false);
-        onQRCodeScanned(codes[0].value as string);
+        try {
+          const decodedData = decodeQRData(codes[0].value as string);
+          setIsScanning(false);
+          onQRCodeScanned(decodedData);
+        } catch (error) {
+          console.error('QR kod okuma hatası:', error);
+        }
       }
     },
   });

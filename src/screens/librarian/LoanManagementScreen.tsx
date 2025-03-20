@@ -33,28 +33,26 @@ const LoanManagementScreen = () => {
     new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
   ); // 14 gün sonrası
 
-  const handleQRCodeScanned = async (data: string) => {
+  const handleQRCodeScanned = async (decodedData: object) => {
     try {
-      console.log('Scanned QR Data:', data);
-      const scannedData = JSON.parse(data);
-      console.log('Parsed QR Data:', scannedData);
+      console.log('Decoded QR Data:', decodedData);
 
       if (scanningFor === 'user') {
         // Kullanıcı QR kodu
-        if (scannedData.email && scannedData.name) {
+        const userData = decodedData as {email?: string; name?: string};
+        if (userData.email && userData.name) {
           try {
-            // Email ile kullanıcıyı bul
-            const userData = await dispatch(
-              findUserByEmail(scannedData.email),
+            const foundUser = await dispatch(
+              findUserByEmail(userData.email),
             ).unwrap();
 
             dispatch(
               setSelectedUser({
-                _id: userData._id, // MongoDB ObjectId
-                name: userData.name,
+                _id: foundUser._id,
+                name: foundUser.name,
               }),
             );
-            Alert.alert('Başarılı', `${userData.name} seçildi`);
+            Alert.alert('Başarılı', `${foundUser.name} seçildi`);
           } catch (error: any) {
             Alert.alert('Hata', error.message || 'Kullanıcı bulunamadı');
           }
@@ -63,21 +61,24 @@ const LoanManagementScreen = () => {
         }
       } else if (scanningFor === 'book') {
         // Kitap QR kodu
-        console.log('Kitap verisi:', scannedData); // Debug için
-        if (
-          scannedData.id &&
-          scannedData.title &&
-          scannedData.status === 'available'
-        ) {
+        const bookData = decodedData as {
+          id?: string;
+          title?: string;
+          author?: string;
+          status?: string;
+        };
+
+        console.log('Kitap verisi:', bookData);
+        if (bookData.id && bookData.title && bookData.status === 'available') {
           dispatch(
             setSelectedBook({
-              _id: scannedData.id,
-              title: scannedData.title,
-              author: scannedData.author,
+              _id: bookData.id,
+              title: bookData.title,
+              author: bookData.author || '',
             }),
           );
-          Alert.alert('Başarılı', `${scannedData.title} seçildi`);
-        } else if (scannedData.status !== 'available') {
+          Alert.alert('Başarılı', `${bookData.title} seçildi`);
+        } else if (bookData.status !== 'available') {
           Alert.alert('Hata', 'Bu kitap şu anda ödünç verilemez');
         } else {
           Alert.alert('Hata', 'Geçersiz kitap QR kodu');

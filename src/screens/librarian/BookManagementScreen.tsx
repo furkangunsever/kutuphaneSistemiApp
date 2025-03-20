@@ -91,12 +91,19 @@ const BookManagementScreen = () => {
     loadBooks();
   };
 
-  const handleQRCodeScanned = async (data: string) => {
+  const handleQRCodeScanned = async (decodedData: object) => {
     try {
-      const bookData = JSON.parse(data);
+      const bookData = decodedData as {
+        id?: string;
+        title?: string;
+        author?: string;
+      };
+
       if (bookData.id) {
         // QR kod ile kitap bulma işlemi
         setSearchQuery(bookData.id);
+      } else {
+        Alert.alert('Hata', 'Geçersiz kitap QR kodu');
       }
     } catch (error) {
       Alert.alert('Hata', 'Geçersiz QR kod');

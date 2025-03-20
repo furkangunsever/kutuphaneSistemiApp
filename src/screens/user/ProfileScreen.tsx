@@ -13,6 +13,7 @@ import {logout} from '../../redux/features/authSlice';
 import {RootState} from '../../redux/store';
 import QRCode from 'react-native-qrcode-svg';
 import {user as userIcon} from '../../assets/icons';
+import {encodeQRData} from '../../utils/qrUtils';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -26,7 +27,7 @@ const ProfileScreen = () => {
   };
 
   // QR kod için kullanıcı bilgilerini hazırla
-  const userQRData = JSON.stringify({
+  const userQRData = encodeQRData({
     id: user?._id,
     name: user?.name,
     email: user?.email,

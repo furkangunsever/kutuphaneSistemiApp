@@ -2,6 +2,7 @@ import React from 'react';
 import {Modal, View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import {Book} from '../../types/book';
+import {encodeQRData} from '../../utils/qrUtils';
 
 interface BookQRModalProps {
   visible: boolean;
@@ -12,8 +13,8 @@ interface BookQRModalProps {
 const BookQRModal = ({visible, onClose, book}: BookQRModalProps) => {
   if (!book) return null;
 
-  // QR kod için kitap bilgilerini JSON formatında hazırla
-  const bookData = JSON.stringify({
+  // QR kod için kitap bilgilerini hazırla
+  const bookData = encodeQRData({
     id: book._id,
     title: book.title,
     author: book.author,
