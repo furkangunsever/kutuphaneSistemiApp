@@ -39,6 +39,16 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
     status: 'available' as 'available' | 'borrowed' | 'reserved',
   });
 
+  // Hata durumları için state'ler
+  const [errors, setErrors] = useState({
+    title: '',
+    author: '',
+    ISBN: '',
+    publishYear: '',
+    category: '',
+    quantity: '',
+  });
+
   const [selectedImage, setSelectedImage] = useState<{
     uri?: string;
     type: string;
@@ -58,6 +68,125 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
       });
     }
   }, [editingBook]);
+
+  // Form validasyonları
+  const validateTitle = (text: string) => {
+    if (!text.trim()) {
+      setErrors(prev => ({...prev, title: 'Kitap adı boş bırakılamaz'}));
+      return false;
+    }
+    if (text.length < 2) {
+      setErrors(prev => ({
+        ...prev,
+        title: 'Kitap adı en az 2 karakter olmalıdır',
+      }));
+      return false;
+    }
+    setErrors(prev => ({...prev, title: ''}));
+    return true;
+  };
+
+  const validateAuthor = (text: string) => {
+    if (!text.trim()) {
+      setErrors(prev => ({...prev, author: 'Yazar adı boş bırakılamaz'}));
+      return false;
+    }
+    if (text.length < 2) {
+      setErrors(prev => ({
+        ...prev,
+        author: 'Yazar adı en az 2 karakter olmalıdır',
+      }));
+      return false;
+    }
+    setErrors(prev => ({...prev, author: ''}));
+    return true;
+  };
+
+  const validateISBN = (text: string) => {
+    const cleanISBN = text.replace(/[-\s]/g, '');
+    if (!cleanISBN) {
+      setErrors(prev => ({...prev, ISBN: 'ISBN boş bırakılamaz'}));
+      return false;
+    }
+    if (!/^\d{10}(\d{3})?$/.test(cleanISBN)) {
+      setErrors(prev => ({
+        ...prev,
+        ISBN: 'Geçerli bir ISBN giriniz (10 veya 13 haneli)',
+      }));
+      return false;
+    }
+    setErrors(prev => ({...prev, ISBN: ''}));
+    return true;
+  };
+
+  const validatePublishYear = (text: string) => {
+    const year = parseInt(text);
+    const currentYear = new Date().getFullYear();
+
+    if (!text.trim()) {
+      setErrors(prev => ({...prev, publishYear: 'Yayın yılı boş bırakılamaz'}));
+      return false;
+    }
+    if (isNaN(year) || year < 1000 || year > currentYear) {
+      setErrors(prev => ({
+        ...prev,
+        publishYear: `Yayın yılı 1000 ile ${currentYear} arasında olmalıdır`,
+      }));
+      return false;
+    }
+    setErrors(prev => ({...prev, publishYear: ''}));
+    return true;
+  };
+
+  const validateCategory = (text: string) => {
+    if (!text.trim()) {
+      setErrors(prev => ({...prev, category: 'Kategori boş bırakılamaz'}));
+      return false;
+    }
+    setErrors(prev => ({...prev, category: ''}));
+    return true;
+  };
+
+  const validateQuantity = (text: string) => {
+    const quantity = parseInt(text);
+    if (!text.trim()) {
+      setErrors(prev => ({...prev, quantity: 'Adet boş bırakılamaz'}));
+      return false;
+    }
+    if (isNaN(quantity) || quantity < 1) {
+      setErrors(prev => ({...prev, quantity: 'Adet en az 1 olmalıdır'}));
+      return false;
+    }
+    setErrors(prev => ({...prev, quantity: ''}));
+    return true;
+  };
+
+  // Input değişiklik handlerleri
+  const handleChange = (name: string, value: string) => {
+    setFormData(prev => ({...prev, [name]: value}));
+
+    // Validate the field
+    switch (name) {
+      case 'title':
+        validateTitle(value);
+        break;
+      case 'author':
+        validateAuthor(value);
+        break;
+      case 'ISBN':
+        validateISBN(value);
+        break;
+      case 'publishYear':
+        validatePublishYear(value);
+        break;
+      case 'category':
+        validateCategory(value);
+        break;
+      case 'quantity':
+        validateQuantity(value);
+        break;
+    }
+  };
 
   const handleImagePick = async () => {
     try {
@@ -83,24 +212,23 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.title.trim()) {
-      Alert.alert('Hata', 'Kitap adı boş olamaz');
-      return;
-    }
-    if (!formData.author.trim()) {
-      Alert.alert('Hata', 'Yazar adı boş olamaz');
-      return;
-    }
-    if (!formData.ISBN.trim()) {
-      Alert.alert('Hata', 'ISBN numarası boş olamaz');
-      return;
-    }
-    if (!formData.publishYear.trim()) {
-      Alert.alert('Hata', 'Yayın yılı boş olamaz');
-      return;
-    }
-    if (!formData.category.trim()) {
-      Alert.alert('Hata', 'kategori boş olamaz');
+    // Tüm alanları validate et
+    const isValidTitle = validateTitle(formData.title);
+    const isValidAuthor = validateAuthor(formData.author);
+    const isValidISBN = validateISBN(formData.ISBN);
+    const isValidPublishYear = validatePublishYear(formData.publishYear);
+    const isValidCategory = validateCategory(formData.category);
+    const isValidQuantity = validateQuantity(formData.quantity);
+
+    if (
+      !isValidTitle ||
+      !isValidAuthor ||
+      !isValidISBN ||
+      !isValidPublishYear ||
+      !isValidCategory ||
+      !isValidQuantity
+    ) {
+      Alert.alert('Hata', 'Lütfen tüm alanları doğru şekilde doldurunuz');
       return;
     }
 
@@ -189,74 +317,96 @@ const BookFormModal = ({visible, onClose, editingBook}: BookFormModalProps) => {
             <View style={styles.formGroup}>
               <Text style={styles.label}>Kitap Adı *</Text>
               <TextInput
-                style={styles.input}
+                style={[styles.input, errors.title ? styles.inputError : null]}
                 value={formData.title}
-                onChangeText={text => setFormData({...formData, title: text})}
+                onChangeText={text => handleChange('title', text)}
                 placeholder="Kitap adını giriniz"
               />
+              {errors.title ? (
+                <Text style={styles.errorText}>{errors.title}</Text>
+              ) : null}
             </View>
 
             <View style={styles.formGroup}>
               <Text style={styles.label}>Yazar *</Text>
               <TextInput
-                style={styles.input}
+                style={[styles.input, errors.author ? styles.inputError : null]}
                 value={formData.author}
-                onChangeText={text => setFormData({...formData, author: text})}
+                onChangeText={text => handleChange('author', text)}
                 placeholder="Yazar adını giriniz"
               />
+              {errors.author ? (
+                <Text style={styles.errorText}>{errors.author}</Text>
+              ) : null}
             </View>
 
             <View style={styles.formGroup}>
               <Text style={styles.label}>ISBN *</Text>
               <TextInput
-                style={styles.input}
+                style={[styles.input, errors.ISBN ? styles.inputError : null]}
                 value={formData.ISBN}
                 onChangeText={text => {
                   const cleanedText = text.replace(/[^0-9-]/g, '');
-                  setFormData({...formData, ISBN: cleanedText});
+                  handleChange('ISBN', cleanedText);
                 }}
                 placeholder="ISBN numarasını giriniz"
                 keyboardType="numeric"
                 maxLength={17}
                 editable={!editingBook}
               />
+              {errors.ISBN ? (
+                <Text style={styles.errorText}>{errors.ISBN}</Text>
+              ) : null}
             </View>
 
             <View style={styles.formGroup}>
               <Text style={styles.label}>Yayın Yılı *</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  errors.publishYear ? styles.inputError : null,
+                ]}
                 value={formData.publishYear}
-                onChangeText={text =>
-                  setFormData({...formData, publishYear: text})
-                }
+                onChangeText={text => handleChange('publishYear', text)}
                 placeholder="Yayın yılını giriniz"
                 keyboardType="numeric"
               />
+              {errors.publishYear ? (
+                <Text style={styles.errorText}>{errors.publishYear}</Text>
+              ) : null}
             </View>
+
             <View style={styles.formGroup}>
               <Text style={styles.label}>Kategori *</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  errors.category ? styles.inputError : null,
+                ]}
                 value={formData.category}
-                onChangeText={text =>
-                  setFormData({...formData, category: text})
-                }
+                onChangeText={text => handleChange('category', text)}
                 placeholder="Kategori giriniz"
               />
+              {errors.category ? (
+                <Text style={styles.errorText}>{errors.category}</Text>
+              ) : null}
             </View>
 
             <View style={styles.formGroup}>
               <Text style={styles.label}>Adet</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  errors.quantity ? styles.inputError : null,
+                ]}
                 value={formData.quantity}
-                onChangeText={text =>
-                  setFormData({...formData, quantity: text})
-                }
+                onChangeText={text => handleChange('quantity', text)}
                 placeholder="Kitap adedini giriniz"
                 keyboardType="numeric"
               />
+              {errors.quantity ? (
+                <Text style={styles.errorText}>{errors.quantity}</Text>
+              ) : null}
             </View>
 
             <View style={styles.imageContainer}>
@@ -386,6 +536,15 @@ const styles = StyleSheet.create({
   imagePickerText: {
     color: '#666',
     fontSize: 16,
+  },
+  inputError: {
+    borderColor: '#FF4444',
+  },
+  errorText: {
+    color: '#FF4444',
+    fontSize: 12,
+    marginTop: 5,
+    marginLeft: 5,
   },
 });
 

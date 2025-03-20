@@ -1,9 +1,9 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {SafeAreaView, StatusBar, View, StyleSheet} from 'react-native';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
-import RoleSelectionScreen from '../screens/auth/RoleSelectionScreen';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
 import UserNavigator from './UserNavigator';
@@ -13,60 +13,59 @@ import NotificationScreen from '../screens/user/NotificationScreen';
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  const {token, userRole} = useSelector((state: RootState) => state.auth);
+  const token = useSelector((state: RootState) => state.auth.token);
+  const userRole = useSelector((state: RootState) => state.auth.user?.role);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>        
-        {!token ? (
-          // Auth Stack
-          <>
-            <Stack.Screen
-              name="RoleSelection"
-              component={RoleSelectionScreen}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="Login"
-              component={LoginScreen}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="Register"
-              component={RegisterScreen}
-              options={{headerShown: false}}
-            />
-          </>
-        ) : (
-          // App Stack - Role'e göre yönlendirme
-          <>
-            {userRole === 'librarian' ? (
-              <Stack.Screen
-                name="LibrarianHome"
-                component={LibrarianNavigator}
-                options={{
-                  headerShown: false,
-                }}
-              />
+    <View style={styles.container}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="#121921"
+        translucent={false}
+      />
+      <SafeAreaView style={styles.safeArea}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{headerShown: false}}>
+            {!token ? (
+              // Auth stack
+              <Stack.Group>
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen name="Register" component={RegisterScreen} />
+              </Stack.Group>
             ) : (
-              <Stack.Screen
-                name="UserHome"
-                component={UserNavigator}
-                options={{
-                  headerShown: false,
-                }}
-              />
+              // Role'e göre yönlendirme yap
+              <>
+                {userRole === 'librarian' ? (
+                  <Stack.Screen
+                    name="LibrarianTabs"
+                    component={LibrarianNavigator}
+                  />
+                ) : (
+                  <Stack.Screen name="UserTabs" component={UserNavigator} />
+                )}
+              </>
             )}
-          </>
-        )}
-        <Stack.Screen
-          name="Notification"
-          component={NotificationScreen}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+            <Stack.Screen
+              name="Notification"
+              component={NotificationScreen}
+              options={{headerShown: false}}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#121921',
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#121921',
+  },
+});
 
 export default AppNavigator;

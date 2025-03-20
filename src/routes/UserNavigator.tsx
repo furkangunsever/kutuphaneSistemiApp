@@ -4,7 +4,7 @@ import HomeScreen from '../screens/user/HomeScreen';
 import SearchScreen from '../screens/user/SearchScreen';
 import BorrowedBooksScreen from '../screens/user/BorrowedBooksScreen';
 import ProfileScreen from '../screens/user/ProfileScreen';
-import {Image} from 'react-native';
+import {Image, View} from 'react-native';
 import {home, search, books, user} from '../assets/icons';
 
 const Tab = createBottomTabNavigator();
@@ -13,18 +13,19 @@ const UserNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: '#121921',
-        tabBarInactiveTintColor: '#999',
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-        },
         tabBarStyle: {
-          backgroundColor: '#fff',
-          borderTopWidth: 1,
-          borderTopColor: '#eee',
+          backgroundColor: '#121921',
+          borderTopWidth: 0,
+          elevation: 0,
+          height: 60,
+          paddingBottom: 10,
         },
+        tabBarActiveTintColor: '#A28D4F',
+        tabBarInactiveTintColor: '#666',
+        headerShown: false,
+        tabBarBackground: () => (
+          <View style={{backgroundColor: '#121921', flex: 1}} />
+        ),
       }}>
       <Tab.Screen
         name="Home"

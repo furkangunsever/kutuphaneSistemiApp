@@ -9,6 +9,8 @@ const qr_code = require('./qr_code.png');
 const notification = require('./notification.png');
 const dashboard = require('./dashboard.png');
 const loan_management = require('./loan_management.png');
+const view = require('./view.png');
+const hide = require('./hide.png');
 
 export {
   leftarrow,
@@ -22,4 +24,6 @@ export {
   notification,
   dashboard,
   loan_management,
+  view,
+  hide,
 };

@@ -19,17 +19,16 @@ const initialState: AuthState = {
   userRole: null,
 };
 
-
 export const login = createAsyncThunk(
   'auth/login',
   async (
-    {email, password, role}: {email: string; password: string; role: string},
+    {email, password}: {email: string; password: string},
     {rejectWithValue},
   ) => {
     try {
       console.log('Login isteği gönderiliyor:', {
         url: `${BASE_URL}/auth/login`,
-        data: {email, password, role},
+        data: {email, password},
       });
 
       const response = await axios.post(
@@ -37,7 +36,6 @@ export const login = createAsyncThunk(
         {
           email,
           password,
-          role,
         },
         {
           headers: {
@@ -73,18 +71,13 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   'auth/register',
   async (
-    {
-      name,
-      email,
-      password,
-      role,
-    }: {name: string; email: string; password: string; role: string},
+    {name, email, password}: {name: string; email: string; password: string},
     {rejectWithValue},
   ) => {
     try {
       console.log('Register isteği gönderiliyor:', {
         url: `${BASE_URL}/auth/register`,
-        data: {name, email, password, role},
+        data: {name, email, password, role: 'user'},
       });
 
       const response = await axios.post(
@@ -93,7 +86,7 @@ export const register = createAsyncThunk(
           name,
           email,
           password,
-          role,
+          role: 'user',
         },
         {
           headers: {
