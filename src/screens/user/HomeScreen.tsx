@@ -62,6 +62,69 @@ const HomeScreen = ({navigation}: any) => {
   const availableBooks =
     books?.filter(book => book.status === 'available') || [];
 
+  const renderItem = ({item, index}: {item: Book; index: number}) => {
+    // Kitap durumunu belirle
+    let displayStatus = item.quantity === 0 ? 'borrowed' : item.status;
+    let statusText = '';
+
+    // Durumu Türkçeleştir
+    switch (displayStatus) {
+      case 'borrowed':
+        statusText = 'ÖDÜNÇ ALINDI';
+        break;
+      case 'available':
+        statusText = 'MEVCUT';
+        break;
+      case 'reserved':
+        statusText = 'REZERVE';
+        break;
+      default:
+        statusText = 'MEVCUT';
+    }
+
+    return (
+      <View key={item._id} style={styles.bookItem}>
+        <Text style={styles.bookIndex}>{index + 1}</Text>
+        <View style={styles.bookCover}>
+          {item.imageUrl ? (
+            <Image
+              source={{uri: item.imageUrl}}
+              style={styles.coverImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.coverPlaceholder} />
+          )}
+        </View>
+        <View style={styles.bookInfo}>
+          <View style={styles.bookTitleContainer}>
+            <Text style={styles.bookTitle}>{item.title}</Text>
+            <TouchableOpacity
+              style={styles.qrButton}
+              onPress={() => handleShowQR(item)}>
+              <Image source={qr_code} style={styles.qrIcon} />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.bookAuthor}>{item.author}</Text>
+          <View style={styles.bookDetails}>
+            <Text style={styles.detailText}>ISBN: {item.ISBN}</Text>
+            <Text style={styles.detailText}>
+              Yayın Yılı: {item.publishYear}
+            </Text>
+            <Text style={styles.detailText}>Kategori: {item.category}</Text>
+          </View>
+          <View style={styles.bookActions}>
+            <View style={styles.statusContainer}>
+              <Text style={[styles.statusText, styles[displayStatus]]}>
+                {statusText}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -76,49 +139,7 @@ const HomeScreen = ({navigation}: any) => {
         </View>
 
         <View style={styles.bookList}>
-          {books?.map((book, index) => (
-            <View key={book._id} style={styles.bookItem}>
-              <Text style={styles.bookIndex}>{index + 1}</Text>
-              <View style={styles.bookCover}>
-                {book.imageUrl ? (
-                  <Image
-                    source={{uri: book.imageUrl}}
-                    style={styles.coverImage}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View style={styles.coverPlaceholder} />
-                )}
-              </View>
-              <View style={styles.bookInfo}>
-                <View style={styles.bookTitleContainer}>
-                  <Text style={styles.bookTitle}>{book.title}</Text>
-                  <TouchableOpacity
-                    style={styles.qrButton}
-                    onPress={() => handleShowQR(book)}>
-                    <Image source={qr_code} style={styles.qrIcon} />
-                  </TouchableOpacity>
-                </View>
-                <Text style={styles.bookAuthor}>{book.author}</Text>
-                <View style={styles.bookDetails}>
-                  <Text style={styles.detailText}>ISBN: {book.ISBN}</Text>
-                  <Text style={styles.detailText}>
-                    Yayın Yılı: {book.publishYear}
-                  </Text>
-                  <Text style={styles.detailText}>
-                    Kategori: {book.category}
-                  </Text>
-                </View>
-                <View style={styles.bookActions}>
-                  <View style={styles.statusContainer}>
-                    <Text style={[styles.statusText, styles[book.status]]}>
-                      {book.status.toUpperCase()}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-          ))}
+          {books?.map((book, index) => renderItem({item: book, index}))}
         </View>
       </ScrollView>
       <BookQRModal
@@ -328,7 +349,6 @@ const styles = StyleSheet.create({
     height: 24,
     tintColor: '#121921',
   },
-  
 });
 
 export default HomeScreen;

@@ -88,40 +88,61 @@ const SearchScreen = () => {
     setIsQRModalVisible(true);
   };
 
-  const renderBookItem = ({item}: {item: Book}) => (
-    <View style={styles.bookItem}>
-      <View style={styles.bookCover}>
-        {item.imageUrl ? (
-          <Image
-            source={{uri: item.imageUrl}}
-            style={styles.coverImage}
-            resizeMode="cover"
-          />
-        ) : (
-          <View style={styles.coverPlaceholder} />
-        )}
-      </View>
-      <View style={styles.bookInfo}>
-        <View style={styles.bookTitleContainer}>
-          <Text style={styles.bookTitle}>{item.title}</Text>
-          <TouchableOpacity
-            style={styles.qrButton}
-            onPress={() => handleShowQR(item)}>
-            <Image source={qr_code} style={styles.qrIcon} />
-          </TouchableOpacity>
+  const renderBookItem = ({item}: {item: Book}) => {
+    // Kitap durumunu belirle
+    let displayStatus = item.quantity === 0 ? 'borrowed' : item.status;
+    let statusText = '';
+
+    // Durumu Türkçeleştir
+    switch (displayStatus) {
+      case 'borrowed':
+        statusText = 'ÖDÜNÇ ALINDI';
+        break;
+      case 'available':
+        statusText = 'MEVCUT';
+        break;
+      case 'reserved':
+        statusText = 'REZERVE';
+        break;
+      default:
+        statusText = displayStatus.toUpperCase();
+    }
+
+    return (
+      <View style={styles.bookItem}>
+        <View style={styles.bookCover}>
+          {item.imageUrl ? (
+            <Image
+              source={{uri: item.imageUrl}}
+              style={styles.coverImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.coverPlaceholder} />
+          )}
         </View>
-        <Text style={styles.bookAuthor}>{item.author}</Text>
-        <Text style={styles.bookDetails}>ISBN: {item.ISBN}</Text>
-        <Text style={styles.bookDetails}>Yayın Yılı: {item.publishYear}</Text>
-        <Text style={styles.bookDetails}>Kategori: {item.category}</Text>
-        <View style={styles.statusContainer}>
-          <Text style={[styles.statusText, styles[item.status]]}>
-            {item.status.toUpperCase()}
-          </Text>
+        <View style={styles.bookInfo}>
+          <View style={styles.bookTitleContainer}>
+            <Text style={styles.bookTitle}>{item.title}</Text>
+            <TouchableOpacity
+              style={styles.qrButton}
+              onPress={() => handleShowQR(item)}>
+              <Image source={qr_code} style={styles.qrIcon} />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.bookAuthor}>{item.author}</Text>
+          <Text style={styles.bookDetails}>ISBN: {item.ISBN}</Text>
+          <Text style={styles.bookDetails}>Yayın Yılı: {item.publishYear}</Text>
+          <Text style={styles.bookDetails}>Kategori: {item.category}</Text>
+          <View style={styles.statusContainer}>
+            <Text style={[styles.statusText, styles[displayStatus]]}>
+              {statusText}
+            </Text>
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   const renderEmptyResult = () => {
     if (!searchQuery) return null;

@@ -37,36 +37,58 @@ const BookList = ({books, onEdit, onDelete}: BookListProps) => {
     setIsQRModalVisible(true);
   };
 
-  const renderItem = ({item}: {item: Book}) => (
-    <TouchableOpacity onPress={() => handleBookPress(item)}>
-      <View style={styles.bookItem}>
-        {item.imageUrl && (
-          <Image source={{uri: item.imageUrl}} style={styles.bookImage} />
-        )}
-        <View style={styles.bookInfo}>
-          <Text style={styles.bookTitle}>{item.title}</Text>
-          <Text style={styles.bookAuthor}>Yazar: {item.author}</Text>
-          <Text style={styles.bookDetails}>ISBN: {item.ISBN}</Text>
-          <Text style={styles.bookDetails}>Yayın Yılı: {item.publishYear}</Text>
-          <Text style={styles.bookDetails}>Kategori: {item.category}</Text>
-          <Text style={styles.bookDetails}>Adet: {item.quantity}</Text>
-          <Text style={styles.bookStatus}>Durum: {item.status}</Text>
+  const renderItem = ({item}: {item: Book}) => {
+    // Kitap durumunu belirle
+    let displayStatus: 'available' | 'borrowed' | 'reserved' =
+      item.quantity === 0 ? 'borrowed' : item.status;
+
+    const getStatusText = (status: 'available' | 'borrowed' | 'reserved') => {
+      if (status === 'borrowed') return 'Ödünç Alındı';
+      if (status === 'available') return 'Mevcut';
+      return 'Rezerve Edildi';
+    };
+
+    return (
+      <TouchableOpacity onPress={() => handleBookPress(item)}>
+        <View style={styles.bookItem}>
+          {item.imageUrl && (
+            <Image source={{uri: item.imageUrl}} style={styles.bookImage} />
+          )}
+          <View style={styles.bookInfo}>
+            <Text style={styles.bookTitle}>{item.title}</Text>
+            <Text style={styles.bookAuthor}>Yazar: {item.author}</Text>
+            <Text style={styles.bookDetails}>ISBN: {item.ISBN}</Text>
+            <Text style={styles.bookDetails}>
+              Yayın Yılı: {item.publishYear}
+            </Text>
+            <Text style={styles.bookDetails}>Kategori: {item.category}</Text>
+            <Text style={styles.bookDetails}>Adet: {item.quantity}</Text>
+            <Text
+              style={[
+                styles.bookStatus,
+                displayStatus === 'borrowed' && styles.borrowedStatus,
+                displayStatus === 'reserved' && styles.reservedStatus,
+                displayStatus === 'available' && styles.availableStatus,
+              ]}>
+              Durum: {getStatusText(displayStatus)}
+            </Text>
+          </View>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.editButton]}
+              onPress={() => onEdit(item)}>
+              <Text style={styles.buttonText}>Düzenle</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.deleteButton]}
+              onPress={() => onDelete(item._id)}>
+              <Text style={styles.buttonText}>Sil</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.actionButtons}>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.editButton]}
-            onPress={() => onEdit(item)}>
-            <Text style={styles.buttonText}>Düzenle</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.deleteButton]}
-            onPress={() => onDelete(item._id)}>
-            <Text style={styles.buttonText}>Sil</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <>
@@ -170,6 +192,15 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 8,
     marginRight: 12,
+  },
+  borrowedStatus: {
+    color: '#FF4444',
+  },
+  reservedStatus: {
+    color: '#FFA500',
+  },
+  availableStatus: {
+    color: '#4CAF50',
   },
 });
 
