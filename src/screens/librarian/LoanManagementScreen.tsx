@@ -20,9 +20,11 @@ import {
   findUserByEmail,
 } from '../../redux/features/loanManagementSlice';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {useNavigation} from '@react-navigation/native';
 
 const LoanManagementScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigation = useNavigation();
   const {selectedUser, selectedBook, isLoading} = useSelector(
     (state: RootState) => state.loanManagement,
   );
@@ -198,6 +200,13 @@ const LoanManagementScreen = () => {
               {isLoading ? 'İşleniyor...' : 'Ödünç Ver'}
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.returnButton}
+            onPress={() => navigation.navigate('ReturnBook' as never)}>
+            <Text style={styles.lendButtonText}>
+              {isLoading ? 'İşleniyor...' : 'İade İşlemlerin Git'}
+            </Text>
+          </TouchableOpacity>
 
           {showDatePicker && (
             <DateTimePicker
@@ -319,6 +328,13 @@ const styles = StyleSheet.create({
   },
   lendButton: {
     backgroundColor: '#A28D4F',
+    margin: 20,
+    padding: 15,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  returnButton: {
+    backgroundColor: '#FF9800',
     margin: 20,
     padding: 15,
     borderRadius: 12,

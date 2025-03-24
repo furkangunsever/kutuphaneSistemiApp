@@ -5,6 +5,7 @@ import loanReducer from './features/loanSlice';
 import userBookReducer from './features/userBookSlice';
 import dashboardReducer from './features/dashboardSlice';
 import loanManagementReducer from './features/loanManagementSlice';
+import borrowReducer from './features/borrowSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     userBooks: userBookReducer,
     dashboard: dashboardReducer,
     loanManagement: loanManagementReducer,
+    borrows: borrowReducer,
   },
 });
 

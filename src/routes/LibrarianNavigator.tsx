@@ -1,13 +1,25 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Image, View} from 'react-native';
 import LibrarianDashboardScreen from '../screens/librarian/LibrarianDashboardScreen';
 import BookManagementScreen from '../screens/librarian/BookManagementScreen';
 import LoanManagementScreen from '../screens/librarian/LoanManagementScreen';
 import LibrarianProfileScreen from '../screens/librarian/LibrarianProfileScreen';
+import ReturnBookScreen from '../screens/librarian/ReturnBookScreen';
 import {dashboard, books, loan_management, user} from '../assets/icons';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+const LoanStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="LoanManagementMain" component={LoanManagementScreen} />
+      <Stack.Screen name="ReturnBook" component={ReturnBookScreen} />
+    </Stack.Navigator>
+  );
+};
 
 const LibrarianNavigator = () => {
   return (
@@ -55,7 +67,7 @@ const LibrarianNavigator = () => {
       />
       <Tab.Screen
         name="LoanManagement"
-        component={LoanManagementScreen}
+        component={LoanStack}
         options={{
           tabBarLabel: 'Ödünç',
           tabBarIcon: ({color}) => (
