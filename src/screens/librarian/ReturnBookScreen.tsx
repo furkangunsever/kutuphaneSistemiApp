@@ -18,7 +18,7 @@ import {
   fetchOverdueBorrows,
   returnBook,
 } from '../../redux/features/borrowSlice';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 import {leftarrow} from '../../assets/icons';
 
 const ReturnBookScreen = () => {
@@ -27,6 +27,7 @@ const ReturnBookScreen = () => {
     (state: RootState) => state.borrows,
   );
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   const [showOverdue, setShowOverdue] = useState(false);
   const [selectedBorrow, setSelectedBorrow] = useState<any>(null);
@@ -37,18 +38,22 @@ const ReturnBookScreen = () => {
   const [returnNotes, setReturnNotes] = useState('');
 
   useEffect(() => {
-    loadBorrows();
-  }, []);
+    if (isFocused) {
+      loadBorrows();
+    }
+    // Ekrandan çıkıldığında cleanup işlemi
+    return () => {
+      setSelectedBorrow(null);
+      setReturnModalVisible(false);
+    };
+  }, [isFocused]);
 
   const loadBorrows = async () => {
     try {
-      console.log('Loading borrows...'); // Debug log
       await Promise.all([
         dispatch(fetchActiveBorrows()),
         dispatch(fetchOverdueBorrows()),
       ]);
-      console.log('Active Borrows:', activeBorrows); // Debug log
-      console.log('Overdue Borrows:', overdueBorrows); // Debug log
     } catch (error) {
       console.error('Ödünç kayıtları yüklenirken hata:', error);
     }
@@ -101,7 +106,6 @@ const ReturnBookScreen = () => {
 
   // FlatList'in data prop'unu kontrol edelim
   const borrowsToShow = showOverdue ? overdueBorrows : activeBorrows;
-  console.log('Borrows to show:', borrowsToShow); // Debug log
 
   if (isLoading) {
     return (
@@ -122,11 +126,6 @@ const ReturnBookScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <Image source={leftarrow} style={styles.backIcon} />
-        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.filterButton, !showOverdue && styles.activeFilter]}
           onPress={() => setShowOverdue(false)}>
@@ -173,7 +172,11 @@ const ReturnBookScreen = () => {
       <Modal
         visible={returnModalVisible}
         transparent={true}
-        animationType="slide">
+        animationType="slide"
+        onRequestClose={() => {
+          setReturnModalVisible(false);
+          setSelectedBorrow(null);
+        }}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Kitap İade</Text>

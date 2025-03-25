@@ -7,7 +7,13 @@ import BookManagementScreen from '../screens/librarian/BookManagementScreen';
 import LoanManagementScreen from '../screens/librarian/LoanManagementScreen';
 import LibrarianProfileScreen from '../screens/librarian/LibrarianProfileScreen';
 import ReturnBookScreen from '../screens/librarian/ReturnBookScreen';
-import {dashboard, books, loan_management, user} from '../assets/icons';
+import {
+  dashboard,
+  books,
+  loan_management,
+  user,
+  return_book,
+} from '../assets/icons';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -15,7 +21,10 @@ const Stack = createNativeStackNavigator();
 const LoanStack = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="LoanManagementMain" component={LoanManagementScreen} />
+      <Stack.Screen
+        name="LoanManagementMain"
+        component={LoanManagementScreen}
+      />
       <Stack.Screen name="ReturnBook" component={ReturnBookScreen} />
     </Stack.Navigator>
   );
@@ -67,12 +76,25 @@ const LibrarianNavigator = () => {
       />
       <Tab.Screen
         name="LoanManagement"
-        component={LoanStack}
+        component={LoanManagementScreen}
         options={{
           tabBarLabel: 'Ödünç',
           tabBarIcon: ({color}) => (
             <Image
               source={loan_management}
+              style={{width: 24, height: 24, tintColor: color}}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ReturnBook"
+        component={ReturnBookScreen}
+        options={{
+          tabBarLabel: 'İade İşlemi',
+          tabBarIcon: ({color}) => (
+            <Image
+              source={return_book}
               style={{width: 24, height: 24, tintColor: color}}
             />
           ),

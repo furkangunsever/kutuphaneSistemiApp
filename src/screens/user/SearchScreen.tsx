@@ -105,7 +105,7 @@ const SearchScreen = () => {
         statusText = 'REZERVE';
         break;
       default:
-        statusText = displayStatus.toUpperCase();
+      //  statusText = displayStatus.toUpperCase();
     }
 
     return (

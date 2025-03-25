@@ -11,6 +11,7 @@ const dashboard = require('./dashboard.png');
 const loan_management = require('./loan_management.png');
 const view = require('./view.png');
 const hide = require('./hide.png');
+const return_book = require('./return_book.png');
 
 export {
   leftarrow,
@@ -26,4 +27,5 @@ export {
   loan_management,
   view,
   hide,
+  return_book,
 };

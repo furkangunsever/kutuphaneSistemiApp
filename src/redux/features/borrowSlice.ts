@@ -47,10 +47,8 @@ export const fetchActiveBorrows = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/borrows/active`, {
         headers: {Authorization: `Bearer ${token}`},
       });
-      console.log('Active Borrows Response:', response.data);
       return response.data.borrows || response.data;
     } catch (error: any) {
-      console.error('Active Borrows Error:', error.response?.data);
       return rejectWithValue(
         error.response?.data?.message || 'Bir hata oluştu',
       );
@@ -67,7 +65,6 @@ export const fetchOverdueBorrows = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/borrows/overdue`, {
         headers: {Authorization: `Bearer ${token}`},
       });
-      console.log('Overdue Borrows Response:', response.data);
       return response.data.borrows || response.data;
     } catch (error: any) {
       console.error('Overdue Borrows Error:', error.response?.data);
