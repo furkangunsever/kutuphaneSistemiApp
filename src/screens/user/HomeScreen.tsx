@@ -129,9 +129,9 @@ const HomeScreen = ({navigation}: any) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Hoşgeldin, {user?.name}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
           <Image source={notification} style={styles.notificationIcon} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <ScrollView style={styles.conteiner_2}>
         <View style={styles.statsContainer}>
